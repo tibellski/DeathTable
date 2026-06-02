@@ -398,6 +398,20 @@ local function parseDeathMessage(message)
             }
         end
 
+        local lavaZone, lavaLevel = string.match(
+        afterName,
+            "%s*was burnt to a crisp by lava in (.+)! They were level (%d+)"
+        )
+
+        if lavaZone and lavaLevel then
+            return {
+                name = name,
+                killer = "Lava",
+                zone = lavaZone,
+                level = lavaLevel
+            }
+        end
+
         return nil
     end
 
@@ -458,6 +472,8 @@ function updateRows(animated)
                 rowTexts[i].killer:SetText("|cff996633" .. row.killer .. "|r")
             elseif row.killer == "Drowning" then
                 rowTexts[i].killer:SetText("|cff3399ff" .. row.killer .. "|r")
+            elseif row.killer == "Lava" then
+                rowTexts[i].killer:SetText("|cffffaa00" .. row.killer .. "|r")
             else
                 rowTexts[i].killer:SetText("|cffff7777" .. row.killer .. "|r")
             end
@@ -821,5 +837,19 @@ SlashCmdList["DEATHTABLE"] = function(input)
         end
     else
         setWindowShown(not window:IsShown())
+    end
+end
+
+SLASH_DEATHTABLETEST1 = "/dttest"
+
+SlashCmdList["DEATHTABLETEST"] = function()
+    local message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 16"
+    local death = parseDeathMessage(message)
+
+    if death then
+        addDeathMessage(death)
+        printMessage("Test death added.")
+    else
+        printMessage("Test parse failed.")
     end
 end
