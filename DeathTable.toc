@@ -2,7 +2,7 @@
 ## Title: DeathTable
 ## Notes: Compact Hardcore death tracker
 ## Author: Linus Tibell
-## Version: 1.0
+## Version: 1.0.0
 ## SavedVariables: DeathTableDB
 
 Libs\LibStub\LibStub.lua
