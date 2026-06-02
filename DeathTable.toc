@@ -4,6 +4,7 @@
 ## Author: Linus Tibell
 ## Version: 1.0.0
 ## SavedVariables: DeathTableDB
+## IconTexture: Interface\Icons\INV_Misc_Bone_Skull_02
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
