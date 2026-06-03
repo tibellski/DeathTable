@@ -4,7 +4,7 @@ local historyOffset = 0
 local ldbIcon = nil
 local guildMembers = {}
 
-DeathTableDB = DeathTableDB or {}
+DeathFeedDB = DeathFeedDB or {}
 
 local defaults = {
     point = "CENTER",
@@ -35,16 +35,16 @@ local function copyDefaults(source, target)
     end
 end
 
-copyDefaults(defaults, DeathTableDB)
+copyDefaults(defaults, DeathFeedDB)
 
 local function trimHistory()
-    while #DeathTableDB.history > maxHistory do
-        table.remove(DeathTableDB.history)
+    while #DeathFeedDB.history > maxHistory do
+        table.remove(DeathFeedDB.history)
     end
 end
 
 local function printMessage(message)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[DeathTable]|r " .. message)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[DeathFeedDB]|r " .. message)
 end
 
 local function runWho(name)
@@ -84,15 +84,15 @@ local function isGuildMember(name)
     return guildMembers[name] == true
 end
 
-local window = CreateFrame("Frame", "DeathTableFrame", UIParent, "BackdropTemplate")
-window:SetSize(DeathTableDB.width, DeathTableDB.height)
+local window = CreateFrame("Frame", "DeathFeedFrame", UIParent, "BackdropTemplate")
+window:SetSize(DeathFeedDB.width, DeathFeedDB.height)
 
 window:SetPoint(
-    DeathTableDB.point,
+    DeathFeedDB.point,
     UIParent,
-    DeathTableDB.relativePoint,
-    DeathTableDB.x,
-    DeathTableDB.y
+    DeathFeedDB.relativePoint,
+    DeathFeedDB.x,
+    DeathFeedDB.y
 )
 
 window:SetMovable(true)
@@ -104,11 +104,11 @@ window:SetClampedToScreen(true)
 local function updateResizeBounds()
     local minWidth = 180
 
-    if DeathTableDB.showKiller and DeathTableDB.showZone then
+    if DeathFeedDB.showKiller and DeathFeedDB.showZone then
         minWidth = 430
-    elseif DeathTableDB.showKiller then
+    elseif DeathFeedDB.showKiller then
         minWidth = 320
-    elseif DeathTableDB.showZone then
+    elseif DeathFeedDB.showZone then
         minWidth = 320
     end
 
@@ -118,7 +118,7 @@ local function updateResizeBounds()
 
     if window:GetWidth() < minWidth then
         window:SetWidth(minWidth)
-        DeathTableDB.width = minWidth
+        DeathFeedDB.width = minWidth
     end
 end
 
@@ -131,10 +131,10 @@ window:SetScript("OnDragStop", function(self)
 
     local point, _, relativePoint, x, y = self:GetPoint()
 
-    DeathTableDB.point = point
-    DeathTableDB.relativePoint = relativePoint
-    DeathTableDB.x = x
-    DeathTableDB.y = y
+    DeathFeedDB.point = point
+    DeathFeedDB.relativePoint = relativePoint
+    DeathFeedDB.x = x
+    DeathFeedDB.y = y
 end)
 
 local resizeHandle = CreateFrame("Button", nil, window)
@@ -155,16 +155,16 @@ end)
 resizeHandle:SetScript("OnMouseUp", function()
     window:StopMovingOrSizing()
 
-    DeathTableDB.width = window:GetWidth()
-    DeathTableDB.height = window:GetHeight()
+    DeathFeedDB.width = window:GetWidth()
+    DeathFeedDB.height = window:GetHeight()
 
     updateLayout()
     updateRows(false)
 end)
 
 window:SetScript("OnSizeChanged", function()
-    DeathTableDB.width = window:GetWidth()
-    DeathTableDB.height = window:GetHeight()
+    DeathFeedDB.width = window:GetWidth()
+    DeathFeedDB.height = window:GetHeight()
 
     updateLayout()
     updateRows(false)
@@ -272,14 +272,14 @@ function updateLayout()
     local killerWidth = 0
     local zoneWidth = 0
 
-    if DeathTableDB.showKiller and DeathTableDB.showZone then
+    if DeathFeedDB.showKiller and DeathFeedDB.showZone then
         nameWidth = 90
         killerWidth = 120
         zoneWidth = math.max(60, width - zoneX - rightPadding)
-    elseif DeathTableDB.showKiller then
+    elseif DeathFeedDB.showKiller then
         nameWidth = 90
         killerWidth = math.max(80, width - killerX - rightPadding)
-    elseif DeathTableDB.showZone then
+    elseif DeathFeedDB.showZone then
         nameWidth = 90
         zoneX = 180
         zoneWidth = math.max(80, width - zoneX - rightPadding)
@@ -300,8 +300,8 @@ function updateLayout()
     headerTexts.zone:ClearAllPoints()
     headerTexts.zone:SetPoint("TOPLEFT", zoneX, -26)
 
-    headerTexts.killer:SetShown(DeathTableDB.showKiller)
-    headerTexts.zone:SetShown(DeathTableDB.showZone)
+    headerTexts.killer:SetShown(DeathFeedDB.showKiller)
+    headerTexts.zone:SetShown(DeathFeedDB.showZone)
 
     for i = 1, maxHistory do
         rowFrames[i]:SetSize(math.max(1, width - 14), rowHeight)
@@ -326,8 +326,8 @@ function updateLayout()
         rowTexts[i].zone:SetPoint("TOPLEFT", zoneX, -31 - (i * rowHeight))
         rowTexts[i].zone:SetWidth(zoneWidth)
 
-        rowTexts[i].killer:SetShown(DeathTableDB.showKiller)
-        rowTexts[i].zone:SetShown(DeathTableDB.showZone)
+        rowTexts[i].killer:SetShown(DeathFeedDB.showKiller)
+        rowTexts[i].zone:SetShown(DeathFeedDB.showZone)
     end
 end
 
@@ -437,7 +437,7 @@ local function getVisibleRows()
     local maxRows = getMaxRows()
 
     for i = 1, maxRows do
-        visibleRows[i] = DeathTableDB.history[i + historyOffset]
+        visibleRows[i] = DeathFeedDB.history[i + historyOffset]
     end
 
     return visibleRows
@@ -484,8 +484,8 @@ function updateRows(animated)
             rowTexts[i].level:Show()
             rowTexts[i].name:Show()
 
-            rowTexts[i].killer:SetShown(DeathTableDB.showKiller)
-            rowTexts[i].zone:SetShown(DeathTableDB.showZone)
+            rowTexts[i].killer:SetShown(DeathFeedDB.showKiller)
+            rowTexts[i].zone:SetShown(DeathFeedDB.showZone)
 
             if animated and i == 1 and historyOffset == 0 then
                 rowTexts[i].time:SetAlpha(0)
@@ -530,7 +530,7 @@ end
 window:EnableMouseWheel(true)
 
 window:SetScript("OnMouseWheel", function(_, delta)
-    local maxOffset = math.max(0, #DeathTableDB.history - getMaxRows())
+    local maxOffset = math.max(0, #DeathFeedDB.history - getMaxRows())
 
     if delta < 0 then
         historyOffset = math.min(historyOffset + 1, maxOffset)
@@ -542,7 +542,7 @@ window:SetScript("OnMouseWheel", function(_, delta)
 end)
 
 local function addDeathMessage(death)
-    table.insert(DeathTableDB.history, 1, {
+    table.insert(DeathFeedDB.history, 1, {
         time = date("%H:%M"),
         name = death.name,
         level = death.level,
@@ -552,7 +552,7 @@ local function addDeathMessage(death)
 
     trimHistory()
 
-    if DeathTableDB.playGuildSound and isGuildMember(death.name) then
+    if DeathFeedDB.playGuildSound and isGuildMember(death.name) then
         PlaySound(1172, "Master")
     end
 
@@ -561,12 +561,12 @@ local function addDeathMessage(death)
 end
 
 local function printParseError(message)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffff4444[DeathTable]|r Failed to parse death message:")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffff4444[DeathFeed]|r Failed to parse death message:")
     DEFAULT_CHAT_FRAME:AddMessage("|cffaaaaaa" .. tostring(message) .. "|r")
 end
 
 local function setWindowShown(shown)
-    DeathTableDB.hidden = not shown
+    DeathFeedDB.hidden = not shown
 
     if shown then
         window:Show()
@@ -575,25 +575,25 @@ local function setWindowShown(shown)
     end
 end
 
-local optionsPanel = CreateFrame("Frame", "DeathTableOptionsPanel")
-optionsPanel.name = "DeathTable"
+local optionsPanel = CreateFrame("Frame", "DeathFeedOptionsPanel")
+optionsPanel.name = "DeathFeed"
 
 local optionsTitle = optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 optionsTitle:SetPoint("TOPLEFT", 16, -16)
-optionsTitle:SetText("DeathTable")
+optionsTitle:SetText("DeathFeed")
 
-local deathTableCategory = nil
+local deathFeedCategory = nil
 
 if Settings and Settings.RegisterCanvasLayoutCategory then
-    deathTableCategory = Settings.RegisterCanvasLayoutCategory(optionsPanel, "DeathTable")
-    Settings.RegisterAddOnCategory(deathTableCategory)
+    deathFeedCategory = Settings.RegisterCanvasLayoutCategory(optionsPanel, "DeathFeed")
+    Settings.RegisterAddOnCategory(deathFeedCategory)
 elseif InterfaceOptions_AddCategory then
     InterfaceOptions_AddCategory(optionsPanel)
 end
 
 local hideChatCheckbox = CreateFrame(
     "CheckButton",
-    "DeathTableHideChatCheckbox",
+    "DeathFeedHideChatCheckbox",
     optionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
@@ -602,11 +602,11 @@ hideChatCheckbox:SetPoint("TOPLEFT", optionsTitle, "BOTTOMLEFT", 0, -16)
 hideChatCheckbox.Text:SetText("Hide original HardcoreDeaths chat")
 
 hideChatCheckbox:SetScript("OnShow", function(self)
-    self:SetChecked(DeathTableDB.hideOriginalChat)
+    self:SetChecked(DeathFeedDB.hideOriginalChat)
 end)
 
 hideChatCheckbox:SetScript("OnClick", function(self)
-    DeathTableDB.hideOriginalChat = self:GetChecked()
+    DeathFeedDB.hideOriginalChat = self:GetChecked()
 end)
 
 local showKillerCheckbox = CreateFrame(
@@ -620,11 +620,11 @@ showKillerCheckbox:SetPoint("TOPLEFT", hideChatCheckbox, "BOTTOMLEFT", 0, -8)
 showKillerCheckbox.Text:SetText("Show killed by column")
 
 showKillerCheckbox:SetScript("OnShow", function(self)
-    self:SetChecked(DeathTableDB.showKiller)
+    self:SetChecked(DeathFeedDB.showKiller)
 end)
 
 showKillerCheckbox:SetScript("OnClick", function(self)
-    DeathTableDB.showKiller = self:GetChecked()
+    DeathFeedDB.showKiller = self:GetChecked()
 
     updateResizeBounds()
     updateLayout()
@@ -642,11 +642,11 @@ showZoneCheckbox:SetPoint("TOPLEFT", showKillerCheckbox, "BOTTOMLEFT", 0, -8)
 showZoneCheckbox.Text:SetText("Show zone column")
 
 showZoneCheckbox:SetScript("OnShow", function(self)
-    self:SetChecked(DeathTableDB.showZone)
+    self:SetChecked(DeathFeedDB.showZone)
 end)
 
 showZoneCheckbox:SetScript("OnClick", function(self)
-    DeathTableDB.showZone = self:GetChecked()
+    DeathFeedDB.showZone = self:GetChecked()
 
     updateResizeBounds()
     updateLayout()
@@ -664,11 +664,11 @@ playSoundCheckbox:SetPoint("TOPLEFT", showZoneCheckbox, "BOTTOMLEFT", 0, -8)
 playSoundCheckbox.Text:SetText("Play sound on guild death")
 
 playSoundCheckbox:SetScript("OnShow", function(self)
-    self:SetChecked(DeathTableDB.playGuildSound)
+    self:SetChecked(DeathFeedDB.playGuildSound)
 end)
 
 playSoundCheckbox:SetScript("OnClick", function(self)
-    DeathTableDB.playGuildSound = self:GetChecked()
+    DeathFeedDB.playGuildSound = self:GetChecked()
 end)
 
 local hideMinimapCheckbox = CreateFrame(
@@ -682,17 +682,17 @@ hideMinimapCheckbox:SetPoint("TOPLEFT", playSoundCheckbox, "BOTTOMLEFT", 0, -8)
 hideMinimapCheckbox.Text:SetText("Hide minimap icon")
 
 hideMinimapCheckbox:SetScript("OnShow", function(self)
-    self:SetChecked(DeathTableDB.minimap.hide)
+    self:SetChecked(DeathFeedDB.minimap.hide)
 end)
 
 hideMinimapCheckbox:SetScript("OnClick", function(self)
-    DeathTableDB.minimap.hide = self:GetChecked()
+    DeathFeedDB.minimap.hide = self:GetChecked()
 
     if ldbIcon then
-        if DeathTableDB.minimap.hide then
-            ldbIcon:Hide("DeathTable")
+        if DeathFeedDB.minimap.hide then
+            ldbIcon:Hide("DeathFeed")
         else
-            ldbIcon:Show("DeathTable")
+            ldbIcon:Show("DeathFeed")
         end
     end
 end)
@@ -709,7 +709,7 @@ clearButton:SetPoint("TOPLEFT", hideMinimapCheckbox, "BOTTOMLEFT", 0, -16)
 clearButton:SetText("Clear history")
 
 clearButton:SetScript("OnClick", function()
-    wipe(DeathTableDB.history)
+    wipe(DeathFeedDB.history)
     historyOffset = 0
     updateRows(false)
 end)
@@ -718,15 +718,15 @@ local function setupMinimapIcon()
     local LDB = LibStub("LibDataBroker-1.1")
     ldbIcon = LibStub("LibDBIcon-1.0")
 
-    local broker = LDB:NewDataObject("DeathTable", {
+    local broker = LDB:NewDataObject("DeathFeed", {
         type = "launcher",
-        text = "DeathTable",
+        text = "DeathFeed",
         icon = "Interface\\Icons\\INV_Misc_Bone_Skull_02",
 
         OnClick = function(_, button)
             if button == "RightButton" then
-                if Settings and Settings.OpenToCategory and deathTableCategory then
-                    Settings.OpenToCategory(deathTableCategory.ID)
+                if Settings and Settings.OpenToCategory and deathFeedCategory then
+                    Settings.OpenToCategory(deathFeedCategory.ID)
                 elseif InterfaceOptionsFrame_OpenToCategory then
                     InterfaceOptionsFrame_OpenToCategory(optionsPanel)
                     InterfaceOptionsFrame_OpenToCategory(optionsPanel)
@@ -737,13 +737,13 @@ local function setupMinimapIcon()
         end,
 
         OnTooltipShow = function(tooltip)
-            tooltip:AddLine("DeathTable")
+            tooltip:AddLine("DeathFeed")
             tooltip:AddLine("Left click: show/hide", 1, 1, 1)
             tooltip:AddLine("Right click: open settings", 1, 1, 1)
         end
     })
 
-    ldbIcon:Register("DeathTable", broker, DeathTableDB.minimap)
+    ldbIcon:Register("DeathFeed", broker, DeathFeedDB.minimap)
 end
 
 local eventFrame = CreateFrame("Frame")
@@ -755,7 +755,7 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
     if event == "PLAYER_LOGIN" then
         updateGuildMembers()
 
-        if DeathTableDB.hidden then
+        if DeathFeedDB.hidden then
             window:Hide()
         end
 
@@ -794,7 +794,7 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", function(
     language,
     channelName
 )
-    if DeathTableDB.hideOriginalChat
+    if DeathFeedDB.hideOriginalChat
         and channelName
         and string.find(channelName, "HardcoreDeaths") then
         return true
@@ -803,9 +803,9 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", function(
     return false
 end)
 
-SLASH_DEATHTABLE1 = "/deathtable"
+SLASH_DEATHFEED1 = "/deathfeed"
 
-SlashCmdList["DEATHTABLE"] = function(input)
+SlashCmdList["DEATHFEED"] = function(input)
     input = string.lower(input or "")
 
     if input == "show" then
@@ -813,25 +813,25 @@ SlashCmdList["DEATHTABLE"] = function(input)
     elseif input == "hide" then
         setWindowShown(false)
     elseif input == "clear" then
-        wipe(DeathTableDB.history)
+        wipe(DeathFeedDB.history)
         historyOffset = 0
         updateRows(false)
         printMessage("History cleared.")
     elseif input == "chat on" then
-        DeathTableDB.hideOriginalChat = true
+        DeathFeedDB.hideOriginalChat = true
         printMessage("Original HardcoreDeaths chat hidden.")
     elseif input == "chat off" then
-        DeathTableDB.hideOriginalChat = false
+        DeathFeedDB.hideOriginalChat = false
         printMessage("Original HardcoreDeaths chat visible.")
     elseif input == "minimap" then
-        DeathTableDB.minimap.hide = not DeathTableDB.minimap.hide
+        DeathFeedDB.minimap.hide = not DeathFeedDB.minimap.hide
 
         if ldbIcon then
-            if DeathTableDB.minimap.hide then
-                ldbIcon:Hide("DeathTable")
+            if DeathFeedDB.minimap.hide then
+                ldbIcon:Hide("DeathFeed")
                 printMessage("Minimap icon hidden.")
             else
-                ldbIcon:Show("DeathTable")
+                ldbIcon:Show("DeathFeed")
                 printMessage("Minimap icon shown.")
             end
         end
@@ -840,9 +840,9 @@ SlashCmdList["DEATHTABLE"] = function(input)
     end
 end
 
-SLASH_DEATHTABLETEST1 = "/dttest"
+SLASH_DEATHFEEDTEST1 = "/dttest"
 
-SlashCmdList["DEATHTABLETEST"] = function()
+SlashCmdList["DEATHFEEDTEST"] = function()
     local message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 16"
     local death = parseDeathMessage(message)
 

@@ -1,4 +1,4 @@
-# DeathTable
+# DeathFeed
 
 Compact Hardcore death tracker for WoW Classic Hardcore.
 
@@ -16,4 +16,4 @@ Compact Hardcore death tracker for WoW Classic Hardcore.
 
 ## Commands
 
-/deathtable
+/deathfeed
