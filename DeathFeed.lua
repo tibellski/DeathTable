@@ -412,6 +412,20 @@ local function parseDeathMessage(message)
             }
         end
 
+        local fatigueZone, fatigueLevel = string.match(
+            afterName,
+            "%s*died of fatigue in (.+)! They were level (%d+)"
+        )
+
+        if fatigueZone and fatigueLevel then
+            return {
+                name = name,
+                killer = "Fatigue",
+                zone = fatigueZone,
+                level = fatigueLevel
+            }
+        end
+
         return nil
     end
 
@@ -474,6 +488,8 @@ function updateRows(animated)
                 rowTexts[i].killer:SetText("|cff3399ff" .. row.killer .. "|r")
             elseif row.killer == "Lava" then
                 rowTexts[i].killer:SetText("|cffffaa00" .. row.killer .. "|r")
+            elseif row.killer == "Fatigue" then
+                rowTexts[i].killer:SetText("|cff66ccff" .. row.killer .. "|r")
             else
                 rowTexts[i].killer:SetText("|cffff7777" .. row.killer .. "|r")
             end
