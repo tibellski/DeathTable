@@ -70,6 +70,12 @@ function parseDeathMessage(message)
     end
 
     -------------------------------------------------------------------
+    -- French player kill (PvP)
+    -------------------------------------------------------------------
+    
+    -- MISSING
+
+    -------------------------------------------------------------------
     -- German creature kill
     -------------------------------------------------------------------
 
@@ -115,6 +121,7 @@ function parseDeathMessage(message)
         -- Fall damage
         ----------------------------------------------------------------
 
+        -- English
         local fallZone, fallLevel = string.match(
             afterName,
             "%s*fell to their death in (.+)! They were level (%d+)"
@@ -129,6 +136,7 @@ function parseDeathMessage(message)
             }
         end
 
+        -- French
         local frenchFallZone, frenchFallLevel = string.match(
             afterName,
             "%s*a succombé en tombant %((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
@@ -143,6 +151,7 @@ function parseDeathMessage(message)
             }
         end
 
+        -- German
         local germanFallZone, germanFallLevel = string.match(
             afterName,
             "ist in (.-) in den Tod gestürzt! Die Stufe war (%d+)"
@@ -161,6 +170,7 @@ function parseDeathMessage(message)
         -- Drowning
         ----------------------------------------------------------------
 
+        -- English
         local drownZone, drownLevel = string.match(
             afterName,
             "%s*drowned to death in (.+)! They were level (%d+)"
@@ -175,6 +185,7 @@ function parseDeathMessage(message)
             }
         end
 
+        -- French
         local frenchDrownZone, frenchDrownLevel = string.match(
             afterName,
             "%s*a succombé en se noyant %((.-)%)%s*.%s*Ce personnage%-joueur était de niveau (%d+)"
@@ -189,6 +200,7 @@ function parseDeathMessage(message)
             }
         end
 
+        -- German
         local germanDrownZone, germanDrownLevel = string.match(
             afterName,
             "ist in (.-) ertrunken! Die Stufe war (%d+)"
@@ -207,6 +219,7 @@ function parseDeathMessage(message)
         -- Lava
         ----------------------------------------------------------------
 
+        -- English
         local lavaZone, lavaLevel = string.match(
             afterName,
             "%s*was burnt to a crisp by lava in (.+)! They were level (%d+)"
@@ -221,6 +234,7 @@ function parseDeathMessage(message)
             }
         end
 
+        -- French
         local frenchLavaZone, frenchLavaLevel = string.match(
             afterName,
             "%s*a péri dans la lave %((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
@@ -235,10 +249,26 @@ function parseDeathMessage(message)
             }
         end
 
+        -- German
+        local germanLavaZone, germanLavaLevel = string.match(
+            afterName,
+            "%s*wurde in (.-) von Lava durchgebraten! Die Stufe war (%d+)"
+        )
+
+        if germanLavaZone and germanLavaLevel then
+            return {
+                name = name,
+                killer = "Lava",
+                zone = germanLavaZone,
+                level = germanLavaLevel
+            }
+        end
+
         ----------------------------------------------------------------
         -- Fatigue
         ----------------------------------------------------------------
 
+        -- English
         local fatigueZone, fatigueLevel = string.match(
             afterName,
             "%s*died of fatigue in (.+)! They were level (%d+)"
@@ -252,6 +282,12 @@ function parseDeathMessage(message)
                 level = fatigueLevel
             }
         end
+
+        -- French
+        -- MISSING
+
+        -- German
+        -- MISSING
 
         return nil
     end
