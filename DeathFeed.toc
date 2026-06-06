@@ -15,4 +15,5 @@ GlobalVariables.lua
 Utils.lua
 Parser.lua
 Options.lua
+Minimap.lua
 DeathFeed.lua
