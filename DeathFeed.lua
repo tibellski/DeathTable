@@ -14,6 +14,7 @@ local defaults = {
     showKiller = true,
     showZone = true,
     playGuildSound = true,
+    minimumLevel = 10,
     minimap = {
         hide = false
     },

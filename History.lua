@@ -10,6 +10,12 @@ function getVisibleRows()
 end
 
 function addDeathMessage(death)
+    local level = tonumber(death.level) or 0
+
+    if level < DeathFeedDB.minimumLevel then
+        return
+    end
+
     table.insert(DeathFeedDB.history, 1, {
         time = date("%H:%M"),
         name = death.name,

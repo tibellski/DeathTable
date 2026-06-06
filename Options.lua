@@ -14,6 +14,10 @@ elseif InterfaceOptions_AddCategory then
     InterfaceOptions_AddCategory(optionsPanel)
 end
 
+    -------------------------------------------------------------------
+    -- Chat
+    -------------------------------------------------------------------
+
 local hideChatCheckbox = CreateFrame(
     "CheckButton",
     "DeathFeedHideChatCheckbox",
@@ -31,6 +35,10 @@ end)
 hideChatCheckbox:SetScript("OnClick", function(self)
     DeathFeedDB.hideOriginalChat = self:GetChecked()
 end)
+
+    -------------------------------------------------------------------
+    -- Killer
+    -------------------------------------------------------------------
 
 local showKillerCheckbox = CreateFrame(
     "CheckButton",
@@ -54,6 +62,10 @@ showKillerCheckbox:SetScript("OnClick", function(self)
     updateRows(false)
 end)
 
+    -------------------------------------------------------------------
+    -- Zone
+    -------------------------------------------------------------------
+
 local showZoneCheckbox = CreateFrame(
     "CheckButton",
     nil,
@@ -76,6 +88,10 @@ showZoneCheckbox:SetScript("OnClick", function(self)
     updateRows(false)
 end)
 
+    -------------------------------------------------------------------
+    -- Sound
+    -------------------------------------------------------------------
+
 local playSoundCheckbox = CreateFrame(
     "CheckButton",
     nil,
@@ -94,6 +110,73 @@ playSoundCheckbox:SetScript("OnClick", function(self)
     DeathFeedDB.playGuildSound = self:GetChecked()
 end)
 
+-------------------------------------------------------------------
+-- Minimum level
+-------------------------------------------------------------------
+
+local minimumLevelLabel = optionsPanel:CreateFontString(
+    nil,
+    "ARTWORK",
+    "GameFontNormal"
+)
+
+minimumLevelLabel:SetPoint("TOPLEFT", playSoundCheckbox, "BOTTOMLEFT", 0, -18)
+minimumLevelLabel:SetText("Minimum level to display")
+
+local minimumLevelDropdown = CreateFrame(
+    "Frame",
+    "DeathFeedMinimumLevelDropdown",
+    optionsPanel,
+    "UIDropDownMenuTemplate"
+)
+
+minimumLevelDropdown:SetPoint("TOPLEFT", minimumLevelLabel, "BOTTOMLEFT", -15, -4)
+
+local minimumLevelOptions = {
+    10,
+    20,
+    30,
+    40,
+    50,
+    60
+}
+
+local function updateMinimumLevelDropdownText()
+    UIDropDownMenu_SetText(
+        minimumLevelDropdown,
+        tostring(DeathFeedDB.minimumLevel or 10)
+    )
+end
+
+UIDropDownMenu_Initialize(minimumLevelDropdown, function()
+    for _, value in ipairs(minimumLevelOptions) do
+        local info = UIDropDownMenu_CreateInfo()
+
+        info.text = tostring(value)
+        info.value = value
+        info.checked = DeathFeedDB.minimumLevel == value
+
+        info.func = function()
+            DeathFeedDB.minimumLevel = value
+            updateMinimumLevelDropdownText()
+            CloseDropDownMenus()
+        end
+
+        UIDropDownMenu_AddButton(info)
+    end
+end)
+
+UIDropDownMenu_SetWidth(minimumLevelDropdown, 80)
+updateMinimumLevelDropdownText()
+
+minimumLevelDropdown:SetScript("OnShow", function()
+    updateMinimumLevelDropdownText()
+end)
+
+    -------------------------------------------------------------------
+    -- Minimap
+    -------------------------------------------------------------------
+
 local hideMinimapCheckbox = CreateFrame(
     "CheckButton",
     nil,
@@ -101,7 +184,7 @@ local hideMinimapCheckbox = CreateFrame(
     "InterfaceOptionsCheckButtonTemplate"
 )
 
-hideMinimapCheckbox:SetPoint("TOPLEFT", playSoundCheckbox, "BOTTOMLEFT", 0, -8)
+hideMinimapCheckbox:SetPoint("TOPLEFT", minimumLevelDropdown, "BOTTOMLEFT", 15, -10)
 hideMinimapCheckbox.Text:SetText("Hide minimap icon")
 
 hideMinimapCheckbox:SetScript("OnShow", function(self)
@@ -119,6 +202,10 @@ hideMinimapCheckbox:SetScript("OnClick", function(self)
         end
     end
 end)
+
+    -------------------------------------------------------------------
+    -- Clear
+    -------------------------------------------------------------------
 
 local clearButton = CreateFrame(
     "Button",

@@ -35,10 +35,10 @@ SlashCmdList["DEATHFEED"] = function(input)
     end
 end
 
-SLASH_DEATHFEEDTEST1 = "/dttest"
+SLASH_DEATHFEEDTEST1 = "/dftest"
 
 SlashCmdList["DEATHFEEDTEST"] = function()
-    local message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 16"
+    local message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 45"
     local death = parseDeathMessage(message)
 
     if death then
