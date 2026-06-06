@@ -19,3 +19,5 @@ Minimap.lua
 History.lua
 DeathFeed.lua
 Events.lua
+ChatFilter.lua
+Commands.lua
