@@ -1,4 +1,4 @@
-local rowHeight = 16
+local rowHeight = 14
 
 DeathFeedDB = DeathFeedDB or {}
 
@@ -8,7 +8,7 @@ local defaults = {
     x = 0,
     y = 0,
     width = 180,
-    height = 132,
+    height = 120,
     hidden = false,
     hideOriginalChat = true,
     showKiller = true,
@@ -52,7 +52,7 @@ function updateResizeBounds()
     end
 
     if window.SetResizeBounds then
-        window:SetResizeBounds(minWidth, 132, 650, 500)
+        window:SetResizeBounds(minWidth, 120, 650, 500)
     end
 
     if window:GetWidth() < minWidth then
@@ -77,9 +77,9 @@ window:SetScript("OnDragStop", function(self)
 end)
 
 local resizeHandle = CreateFrame("Button", nil, window)
-resizeHandle:SetSize(28, 28)
-resizeHandle:SetPoint("BOTTOMRIGHT", 2, -2)
-resizeHandle:SetHitRectInsets(-6, -6, -6, -6)
+resizeHandle:SetSize(16, 16)
+resizeHandle:SetPoint("BOTTOMRIGHT", 0, 0)
+resizeHandle:SetHitRectInsets(-4, -4, -4, -4)
 
 resizeHandle:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
 resizeHandle:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
@@ -121,12 +121,12 @@ window:SetBackdrop({
     }
 })
 
-window:SetBackdropColor(0, 0, 0, 0.82)
-window:SetBackdropBorderColor(0.75, 0.55, 0.25, 1)
+window:SetBackdropColor(0.05, 0.05, 0.05, 0.90)
+window:SetBackdropBorderColor(0.55, 0.55, 0.55, 1)
 
 local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOPLEFT", 10, -8)
-title:SetText("|cffffcc00Death Feed|r")
+title:SetText("|cffcc4444Death Feed|r")
 
 function getMaxRows()
     local usableHeight = window:GetHeight() - 42
@@ -151,11 +151,11 @@ local function makeHeader(text)
     return header
 end
 
-headerTexts.time = makeHeader("|cffaaaaaaTime|r")
-headerTexts.level = makeHeader("|cffaaaaaaLvl|r")
-headerTexts.name = makeHeader("|cffaaaaaaName|r")
-headerTexts.killer = makeHeader("|cffaaaaaaKilled by|r")
-headerTexts.zone = makeHeader("|cffaaaaaaZone|r")
+headerTexts.time = makeHeader("|cff888888Time|r")
+headerTexts.level = makeHeader("|cff888888Lvl|r")
+headerTexts.name = makeHeader("|cff888888Name|r")
+headerTexts.killer = makeHeader("|cff888888Killed by|r")
+headerTexts.zone = makeHeader("|cff888888Zone|r")
 
 local rowFrames = {}
 local rowTexts = {}
@@ -290,9 +290,9 @@ function updateRows(animated)
             rowTexts[i].level:SetText(colorLevel(row.level))
 
             if isGuildMember(row.name) then
-                rowTexts[i].name:SetText("|cff40ff40" .. row.name .. "|r")
+                rowTexts[i].name:SetText("|cff55ff55" .. row.name .. "|r")
             else
-                rowTexts[i].name:SetText("|cffffffff" .. row.name .. "|r")
+                rowTexts[i].name:SetText("|cffdddddd" .. row.name .. "|r")
             end
             
             if row.killer == "Fall damage" then
@@ -320,14 +320,24 @@ function updateRows(animated)
                 rowTexts[i].time:SetAlpha(0)
                 rowTexts[i].level:SetAlpha(0)
                 rowTexts[i].name:SetAlpha(0)
-                rowTexts[i].killer:SetAlpha(0)
-                rowTexts[i].zone:SetAlpha(0)
+                if DeathFeedDB.showKiller then
+                    rowTexts[i].killer:SetAlpha(0)
+                end
+
+                if DeathFeedDB.showZone then
+                    rowTexts[i].zone:SetAlpha(0)
+                end
 
                 UIFrameFadeIn(rowTexts[i].time, 0.35, 0, 1)
                 UIFrameFadeIn(rowTexts[i].level, 0.35, 0, 1)
                 UIFrameFadeIn(rowTexts[i].name, 0.35, 0, 1)
-                UIFrameFadeIn(rowTexts[i].killer, 0.35, 0, 1)
-                UIFrameFadeIn(rowTexts[i].zone, 0.35, 0, 1)
+                if DeathFeedDB.showKiller then
+                    UIFrameFadeIn(rowTexts[i].killer, 0.35, 0, 1)
+                end
+
+                if DeathFeedDB.showZone then
+                    UIFrameFadeIn(rowTexts[i].zone, 0.35, 0, 1)
+                end
             else
                 rowTexts[i].time:SetAlpha(1)
                 rowTexts[i].level:SetAlpha(1)
