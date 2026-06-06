@@ -125,7 +125,7 @@ window:SetBackdropBorderColor(0.75, 0.55, 0.25, 1)
 
 local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOPLEFT", 10, -8)
-title:SetText("|cffffcc00Hardcore Deaths|r")
+title:SetText("|cffffcc00Death Feed|r")
 
 function getMaxRows()
     local usableHeight = window:GetHeight() - 42
