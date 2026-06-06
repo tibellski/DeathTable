@@ -1,8 +1,6 @@
-local maxHistory = 25
 local rowHeight = 16
 local historyOffset = 0
 local ldbIcon = nil
-local guildMembers = {}
 
 DeathFeedDB = DeathFeedDB or {}
 
@@ -24,71 +22,7 @@ local defaults = {
     history = {}
 }
 
-local hardcoreDeathChannels = {
-    ["HardcoreDeaths"] = true,
-    ["Morts extrêmes"] = true,
-    ["HardcoreTode"] = true,
-}
-
-local function copyDefaults(source, target)
-    for key, value in pairs(source) do
-        if type(value) == "table" then
-            target[key] = target[key] or {}
-            copyDefaults(value, target[key])
-        elseif target[key] == nil then
-            target[key] = value
-        end
-    end
-end
-
 copyDefaults(defaults, DeathFeedDB)
-
-local function trimHistory()
-    while #DeathFeedDB.history > maxHistory do
-        table.remove(DeathFeedDB.history)
-    end
-end
-
-local function printMessage(message)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[DeathFeed]|r " .. message)
-end
-
-local function runWho(name)
-    if not name or name == "" then
-        return
-    end
-
-    if C_FriendList and C_FriendList.SendWho then
-        C_FriendList.SendWho(name)
-    elseif SendWho then
-        SendWho(name)
-    else
-        ChatFrame_OpenChat("/who " .. name)
-    end
-end
-
-local function updateGuildMembers()
-    wipe(guildMembers)
-
-    if not IsInGuild() then
-        return
-    end
-
-    GuildRoster()
-
-    for i = 1, GetNumGuildMembers() do
-        local fullName = GetGuildRosterInfo(i)
-
-        if fullName then
-            local name = string.match(fullName, "([^%-]+)") or fullName
-            guildMembers[name] = true
-        end
-    end
-end
-
-local function isGuildMember(name)
-    return guildMembers[name] == true
-end
 
 local window = CreateFrame("Frame", "DeathFeedFrame", UIParent, "BackdropTemplate")
 window:SetSize(DeathFeedDB.width, DeathFeedDB.height)
@@ -334,24 +268,6 @@ function updateLayout()
 
         rowTexts[i].killer:SetShown(DeathFeedDB.showKiller)
         rowTexts[i].zone:SetShown(DeathFeedDB.showZone)
-    end
-end
-
-local function colorLevel(level)
-    local number = tonumber(level)
-
-    if not number then
-        return level
-    end
-
-    if number >= 50 then
-        return "|cffff3333" .. level .. "|r"
-    elseif number >= 30 then
-        return "|cffff8800" .. level .. "|r"
-    elseif number >= 20 then
-        return "|cffffff00" .. level .. "|r"
-    else
-        return "|cff88ff88" .. level .. "|r"
     end
 end
 

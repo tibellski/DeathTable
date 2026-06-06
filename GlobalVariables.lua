@@ -1,0 +1,1 @@
+maxHistory = 25
