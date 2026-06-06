@@ -18,3 +18,4 @@ Options.lua
 Minimap.lua
 History.lua
 DeathFeed.lua
+Events.lua

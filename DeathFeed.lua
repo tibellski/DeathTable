@@ -39,7 +39,7 @@ window:EnableMouse(true)
 window:RegisterForDrag("LeftButton")
 window:SetClampedToScreen(true)
 
-local function updateResizeBounds()
+function updateResizeBounds()
     local minWidth = 180
 
     if DeathFeedDB.showKiller and DeathFeedDB.showZone then
@@ -369,7 +369,7 @@ window:SetScript("OnMouseWheel", function(_, delta)
     updateRows(false)
 end)
 
-local function printParseError(message)
+function printParseError(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cffff4444[DeathFeed]|r Failed to parse death message:")
     DEFAULT_CHAT_FRAME:AddMessage("|cffaaaaaa" .. tostring(message) .. "|r")
 end
@@ -383,56 +383,6 @@ function setWindowShown(shown)
         window:Hide()
     end
 end
-
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("CHAT_MSG_CHANNEL")
-eventFrame:RegisterEvent("GUILD_ROSTER_UPDATE")
-
-eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, channelName)
-    if event == "PLAYER_LOGIN" then
-        updateGuildMembers()
-
-        if DeathFeedDB.hidden then
-            window:Hide()
-        end
-
-        updateResizeBounds()
-        updateLayout()
-        trimHistory()
-        setupMinimapIcon()
-        updateRows(false)
-
-        return
-    end
-
-    if event == "GUILD_ROSTER_UPDATE" then
-        updateGuildMembers()
-        return
-    end
-
-    local isHardcoreDeathChannel =
-        channelName
-        and (
-            string.find(channelName, "HardcoreDeaths")
-            or string.find(channelName, "Morts extrêmes")
-            or string.find(channelName, "HardcoreTode")
-        )
-
-    if not isHardcoreDeathChannel then
-        return
-    end
-
-    print("DeathFeed channel:", tostring(channelName))
-
-    local death = parseDeathMessage(message)
-
-    if death then
-        addDeathMessage(death)
-    else
-        printParseError(message)
-    end
-end)
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", function(
     self,
