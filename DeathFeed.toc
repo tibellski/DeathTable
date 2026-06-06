@@ -16,4 +16,5 @@ Utils.lua
 Parser.lua
 Options.lua
 Minimap.lua
+History.lua
 DeathFeed.lua

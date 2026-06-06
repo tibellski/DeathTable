@@ -127,7 +127,7 @@ local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOPLEFT", 10, -8)
 title:SetText("|cffffcc00Hardcore Deaths|r")
 
-local function getMaxRows()
+function getMaxRows()
     local usableHeight = window:GetHeight() - 42
     return math.max(1, math.min(maxHistory, math.floor(usableHeight / rowHeight)))
 end
@@ -269,17 +269,6 @@ function updateLayout()
     end
 end
 
-local function getVisibleRows()
-    local visibleRows = {}
-    local maxRows = getMaxRows()
-
-    for i = 1, maxRows do
-        visibleRows[i] = DeathFeedDB.history[i + historyOffset]
-    end
-
-    return visibleRows
-end
-
 function updateRows(animated)
     trimHistory()
 
@@ -379,25 +368,6 @@ window:SetScript("OnMouseWheel", function(_, delta)
 
     updateRows(false)
 end)
-
-local function addDeathMessage(death)
-    table.insert(DeathFeedDB.history, 1, {
-        time = date("%H:%M"),
-        name = death.name,
-        level = death.level,
-        killer = death.killer,
-        zone = death.zone
-    })
-
-    trimHistory()
-
-    if DeathFeedDB.playGuildSound and isGuildMember(death.name) then
-        PlaySound(1172, "Master")
-    end
-
-    historyOffset = 0
-    updateRows(true)
-end
 
 local function printParseError(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cffff4444[DeathFeed]|r Failed to parse death message:")
