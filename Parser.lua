@@ -129,6 +129,20 @@ function parseDeathMessage(message)
             }
         end
 
+        local frenchFallZone, frenchFallLevel = string.match(
+            afterName,
+            "%s*a succombé en tombant %((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
+        )
+
+        if frenchFallZone and frenchFallLevel then
+            return {
+                name = name,
+                killer = "Fall damage",
+                zone = frenchFallZone,
+                level = frenchFallLevel
+            }
+        end
+
         local germanFallZone, germanFallLevel = string.match(
             afterName,
             "ist in (.-) in den Tod gestürzt! Die Stufe war (%d+)"
