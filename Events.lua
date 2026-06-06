@@ -37,8 +37,6 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
         return
     end
 
-    print("DeathFeed channel:", tostring(channelName))
-
     local death = parseDeathMessage(message)
 
     if death then

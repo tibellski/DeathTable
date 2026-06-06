@@ -1,4 +1,26 @@
+-----------------------------------------------------------------------
+-- Death Message Parser
+--
+-- Supported languages:
+--   English
+--   French
+--   German
+--
+-- Supported death types:
+--   Creature kills
+--   Player kills
+--   Fall damage
+--   Drowning
+--   Lava
+--   Fatigue
+-----------------------------------------------------------------------
+
 function parseDeathMessage(message)
+
+    -------------------------------------------------------------------
+    -- Extract player name
+    -------------------------------------------------------------------
+
     local nameEnd = string.find(message, "]", 1, true)
 
     if not nameEnd then
@@ -13,13 +35,25 @@ function parseDeathMessage(message)
 
     local afterName = string.sub(message, nameEnd + 1)
 
+    -------------------------------------------------------------------
+    -- Normalize special spaces used by some localized clients
+    -------------------------------------------------------------------
+
     afterName = string.gsub(afterName, "\194\160", " ")
     afterName = string.gsub(afterName, " ", " ")
+
+    -------------------------------------------------------------------
+    -- English creature kill
+    -------------------------------------------------------------------
 
     local rest, level = string.match(
         afterName,
         "%s*has been slain by (.+)! They were level (%d+)"
     )
+
+    -------------------------------------------------------------------
+    -- French creature kill
+    -------------------------------------------------------------------
 
     local frenchKiller, frenchZone, frenchLevel = string.match(
         afterName,
@@ -35,6 +69,10 @@ function parseDeathMessage(message)
         }
     end
 
+    -------------------------------------------------------------------
+    -- German creature kill
+    -------------------------------------------------------------------
+
     local germanKiller, germanZone, germanLevel = string.match(
         afterName,
         "%s*wurde von einer Kreatur %((.-)%) in (.-) getötet! Die Stufe war (%d+)"
@@ -48,6 +86,10 @@ function parseDeathMessage(message)
             level = germanLevel
         }
     end
+
+    -------------------------------------------------------------------
+    -- German player kill (PvP)
+    -------------------------------------------------------------------
 
     local germanPlayerKiller, germanPlayerZone, germanPlayerLevel = string.match(
         afterName,
@@ -63,7 +105,16 @@ function parseDeathMessage(message)
         }
     end
 
+    -------------------------------------------------------------------
+    -- Special deaths
+    -------------------------------------------------------------------
+
     if not rest then
+
+        ----------------------------------------------------------------
+        -- Fall damage
+        ----------------------------------------------------------------
+
         local fallZone, fallLevel = string.match(
             afterName,
             "%s*fell to their death in (.+)! They were level (%d+)"
@@ -91,6 +142,10 @@ function parseDeathMessage(message)
                 level = germanFallLevel
             }
         end
+
+        ----------------------------------------------------------------
+        -- Drowning
+        ----------------------------------------------------------------
 
         local drownZone, drownLevel = string.match(
             afterName,
@@ -134,8 +189,12 @@ function parseDeathMessage(message)
             }
         end
 
+        ----------------------------------------------------------------
+        -- Lava
+        ----------------------------------------------------------------
+
         local lavaZone, lavaLevel = string.match(
-        afterName,
+            afterName,
             "%s*was burnt to a crisp by lava in (.+)! They were level (%d+)"
         )
 
@@ -162,6 +221,10 @@ function parseDeathMessage(message)
             }
         end
 
+        ----------------------------------------------------------------
+        -- Fatigue
+        ----------------------------------------------------------------
+
         local fatigueZone, fatigueLevel = string.match(
             afterName,
             "%s*died of fatigue in (.+)! They were level (%d+)"
@@ -178,6 +241,10 @@ function parseDeathMessage(message)
 
         return nil
     end
+
+    -------------------------------------------------------------------
+    -- Final English creature kill parsing
+    -------------------------------------------------------------------
 
     local killer, zone = string.match(rest, "^(.*) in (.*)$")
 
