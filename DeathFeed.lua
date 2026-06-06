@@ -24,6 +24,11 @@ local defaults = {
     history = {}
 }
 
+local hardcoreDeathChannels = {
+    ["HardcoreDeaths"] = true,
+    ["Morts extrêmes"] = true,
+}
+
 local function copyDefaults(source, target)
     for key, value in pairs(source) do
         if type(value) == "table" then
@@ -44,7 +49,7 @@ local function trimHistory()
 end
 
 local function printMessage(message)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[DeathFeedDB]|r " .. message)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[DeathFeed]|r " .. message)
 end
 
 local function runWho(name)
@@ -368,6 +373,20 @@ local function parseDeathMessage(message)
         afterName,
         "%s*has been slain by (.+)! They were level (%d+)"
     )
+
+    local frenchKiller, frenchZone, frenchLevel = string.match(
+        afterName,
+        "%s*a succombé en combattant ce personnage adverse.?%s*:%s*(.-)%s*%((.-)%)%s*.%s*Ce personnage%-joueur était de niveau (%d+)"
+    )
+
+    if frenchKiller and frenchZone and frenchLevel then
+        return {
+            name = name,
+            killer = frenchKiller,
+            zone = frenchZone,
+            level = frenchLevel
+        }
+    end
 
     if not rest then
         local fallZone, fallLevel = string.match(
@@ -785,11 +804,11 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
     end
 
     if event == "GUILD_ROSTER_UPDATE" then
-    updateGuildMembers()
-    return
-end
+        updateGuildMembers()
+        return
+    end
 
-    if not channelName or not string.find(channelName, "HardcoreDeaths") then
+    if not channelName or not hardcoreDeathChannels[channelName] then
         return
     end
 
@@ -812,7 +831,7 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", function(
 )
     if DeathFeedDB.hideOriginalChat
         and channelName
-        and string.find(channelName, "HardcoreDeaths") then
+        and hardcoreDeathChannels[channelName] then
         return true
     end
 
