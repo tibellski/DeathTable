@@ -27,6 +27,7 @@ local defaults = {
 local hardcoreDeathChannels = {
     ["HardcoreDeaths"] = true,
     ["Morts extrêmes"] = true,
+    ["HardcoreTode"] = true,
 }
 
 local function copyDefaults(source, target)
@@ -388,6 +389,20 @@ local function parseDeathMessage(message)
             killer = frenchKiller,
             zone = frenchZone,
             level = frenchLevel
+        }
+    end
+
+    local germanKiller, germanZone, germanLevel = string.match(
+        afterName,
+        "%s*wurde von einer Kreatur %((.-)%) in (.-) getötet! Die Stufe war (%d+)"
+    )
+
+    if germanKiller and germanZone and germanLevel then
+        return {
+            name = name,
+            killer = germanKiller,
+            zone = germanZone,
+            level = germanLevel
         }
     end
 
@@ -844,6 +859,7 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
         and (
             string.find(channelName, "HardcoreDeaths")
             or string.find(channelName, "Morts extrêmes")
+            or string.find(channelName, "HardcoreTode")
         )
 
     if not isHardcoreDeathChannel then
@@ -874,6 +890,7 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", function(
         and (
             string.find(channelName, "HardcoreDeaths")
             or string.find(channelName, "Morts extrêmes")
+            or string.find(channelName, "HardcoreTode")
         )
 
     if DeathFeedDB.hideOriginalChat and isHardcoreDeathChannel then
