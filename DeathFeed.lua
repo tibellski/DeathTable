@@ -369,6 +369,9 @@ local function parseDeathMessage(message)
 
     local afterName = string.sub(message, nameEnd + 1)
 
+    afterName = string.gsub(afterName, "\194\160", " ")
+    afterName = string.gsub(afterName, " ", " ")
+
     local rest, level = string.match(
         afterName,
         "%s*has been slain by (.+)! They were level (%d+)"
@@ -376,7 +379,7 @@ local function parseDeathMessage(message)
 
     local frenchKiller, frenchZone, frenchLevel = string.match(
         afterName,
-        "%s*a succombé en combattant ce personnage adverse.?%s*:%s*(.-)%s*%((.-)%)%s*.%s*Ce personnage%-joueur était de niveau (%d+)"
+        "a succombé en combattant ce personnage adverse%s*:%s*(.-)%s*%((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
     )
 
     if frenchKiller and frenchZone and frenchLevel then
@@ -417,6 +420,20 @@ local function parseDeathMessage(message)
             }
         end
 
+        local frenchDrownZone, frenchDrownLevel = string.match(
+            afterName,
+            "%s*a succombé en se noyant %((.-)%)%s*.%s*Ce personnage%-joueur était de niveau (%d+)"
+        )
+
+        if frenchDrownZone and frenchDrownLevel then
+            return {
+                name = name,
+                killer = "Drowning",
+                zone = frenchDrownZone,
+                level = frenchDrownLevel
+            }
+        end
+
         local lavaZone, lavaLevel = string.match(
         afterName,
             "%s*was burnt to a crisp by lava in (.+)! They were level (%d+)"
@@ -428,6 +445,20 @@ local function parseDeathMessage(message)
                 killer = "Lava",
                 zone = lavaZone,
                 level = lavaLevel
+            }
+        end
+
+        local frenchLavaZone, frenchLavaLevel = string.match(
+            afterName,
+            "%s*a péri dans la lave %((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
+        )
+
+        if frenchLavaZone and frenchLavaLevel then
+            return {
+                name = name,
+                killer = "Lava",
+                zone = frenchLavaZone,
+                level = frenchLavaLevel
             }
         end
 
@@ -808,9 +839,18 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
         return
     end
 
-    if not channelName or not hardcoreDeathChannels[channelName] then
+    local isHardcoreDeathChannel =
+        channelName
+        and (
+            string.find(channelName, "HardcoreDeaths")
+            or string.find(channelName, "Morts extrêmes")
+        )
+
+    if not isHardcoreDeathChannel then
         return
     end
+
+    print("DeathFeed channel:", tostring(channelName))
 
     local death = parseDeathMessage(message)
 
@@ -829,9 +869,14 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", function(
     language,
     channelName
 )
-    if DeathFeedDB.hideOriginalChat
-        and channelName
-        and hardcoreDeathChannels[channelName] then
+    local isHardcoreDeathChannel =
+        channelName
+        and (
+            string.find(channelName, "HardcoreDeaths")
+            or string.find(channelName, "Morts extrêmes")
+        )
+
+    if DeathFeedDB.hideOriginalChat and isHardcoreDeathChannel then
         return true
     end
 
