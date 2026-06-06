@@ -49,6 +49,20 @@ function parseDeathMessage(message)
         }
     end
 
+    local germanPlayerKiller, germanPlayerZone, germanPlayerLevel = string.match(
+        afterName,
+        "wurde von (.-) in (.-) getötet! Die Stufe war (%d+)"
+    )
+
+    if germanPlayerKiller and germanPlayerZone and germanPlayerLevel then
+        return {
+            name = name,
+            killer = germanPlayerKiller,
+            zone = germanPlayerZone,
+            level = germanPlayerLevel
+        }
+    end
+
     if not rest then
         local fallZone, fallLevel = string.match(
             afterName,
@@ -61,6 +75,20 @@ function parseDeathMessage(message)
                 killer = "Fall damage",
                 zone = fallZone,
                 level = fallLevel
+            }
+        end
+
+        local germanFallZone, germanFallLevel = string.match(
+            afterName,
+            "ist in (.-) in den Tod gestürzt! Die Stufe war (%d+)"
+        )
+
+        if germanFallZone and germanFallLevel then
+            return {
+                name = name,
+                killer = "Fall damage",
+                zone = germanFallZone,
+                level = germanFallLevel
             }
         end
 
@@ -89,6 +117,20 @@ function parseDeathMessage(message)
                 killer = "Drowning",
                 zone = frenchDrownZone,
                 level = frenchDrownLevel
+            }
+        end
+
+        local germanDrownZone, germanDrownLevel = string.match(
+            afterName,
+            "ist in (.-) ertrunken! Die Stufe war (%d+)"
+        )
+
+        if germanDrownZone and germanDrownLevel then
+            return {
+                name = name,
+                killer = "Drowning",
+                zone = germanDrownZone,
+                level = germanDrownLevel
             }
         end
 
