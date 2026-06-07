@@ -284,10 +284,34 @@ function parseDeathMessage(message)
         end
 
         -- French
-        -- MISSING
+        local frenchFatigueZone, frenchFatigueLevel = string.match(
+            afterName,
+            "%s*a succombé de fatigue %((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
+        )
+
+        if frenchFatigueZone and frenchFatigueLevel then
+            return {
+                name = name,
+                killer = "Fatigue",
+                zone = frenchFatigueZone,
+                level = frenchFatigueLevel
+            }
+        end
 
         -- German
-        -- MISSING
+        local germanFatigueZone, germanFatigueLevel = string.match(
+            afterName,
+            "ist in (.-) an Erschöpfung gestorben! Die Stufe war (%d+)"
+        )
+
+        if germanFatigueZone and germanFatigueLevel then
+            return {
+                name = name,
+                killer = "Fatigue",
+                zone = germanFatigueZone,
+                level = germanFatigueLevel
+            }
+        end
 
         return nil
     end
