@@ -88,6 +88,31 @@ showZoneCheckbox:SetScript("OnClick", function(self)
     updateRows(false)
 end)
 
+-------------------------------------------------------------------
+-- Headers
+-------------------------------------------------------------------
+
+local showHeadersCheckbox = CreateFrame(
+    "CheckButton",
+    nil,
+    optionsPanel,
+    "InterfaceOptionsCheckButtonTemplate"
+)
+
+showHeadersCheckbox:SetPoint("TOPLEFT", showZoneCheckbox, "BOTTOMLEFT", 0, -8)
+showHeadersCheckbox.Text:SetText("Show column headers")
+
+showHeadersCheckbox:SetScript("OnShow", function(self)
+    self:SetChecked(DeathFeedDB.showHeaders)
+end)
+
+showHeadersCheckbox:SetScript("OnClick", function(self)
+    DeathFeedDB.showHeaders = self:GetChecked()
+
+    updateLayout()
+    updateRows(false)
+end)
+
     -------------------------------------------------------------------
     -- Sound
     -------------------------------------------------------------------
@@ -99,7 +124,7 @@ local playSoundCheckbox = CreateFrame(
     "InterfaceOptionsCheckButtonTemplate"
 )
 
-playSoundCheckbox:SetPoint("TOPLEFT", showZoneCheckbox, "BOTTOMLEFT", 0, -8)
+playSoundCheckbox:SetPoint("TOPLEFT", showHeadersCheckbox, "BOTTOMLEFT", 0, -8)
 playSoundCheckbox.Text:SetText("Play sound on guild death")
 
 playSoundCheckbox:SetScript("OnShow", function(self)

@@ -1,5 +1,3 @@
-local rowHeight = 14
-
 DeathFeedDB = DeathFeedDB or {}
 
 local defaults = {
@@ -13,6 +11,7 @@ local defaults = {
     hideOriginalChat = true,
     showKiller = true,
     showZone = true,
+    showHeaders = true,
     playGuildSound = true,
     minimumLevel = 10,
     minimap = {
@@ -128,8 +127,24 @@ local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOPLEFT", 10, -8)
 title:SetText("|cffcc4444Death Feed|r")
 
+function getHeaderOffset()
+    if DeathFeedDB.showHeaders then
+        return 31
+    end
+
+    return 18
+end
+
+function getFrameChromeHeight()
+    if DeathFeedDB.showHeaders then
+        return 42
+    end
+
+    return 29
+end
+
 function getMaxRows()
-    local usableHeight = window:GetHeight() - 42
+    local usableHeight = window:GetHeight() - getFrameChromeHeight()
     return math.max(1, math.min(maxHistory, math.floor(usableHeight / rowHeight)))
 end
 
@@ -161,7 +176,7 @@ local rowFrames = {}
 local rowTexts = {}
 
 for i = 1, maxHistory do
-    local y = -31 - (i * rowHeight)
+    local y = -getHeaderOffset() - (i * rowHeight)
 
     rowFrames[i] = CreateFrame("Button", nil, window)
     rowFrames[i]:SetPoint("TOPLEFT", 6, y + 2)
@@ -239,30 +254,33 @@ function updateLayout()
     headerTexts.zone:ClearAllPoints()
     headerTexts.zone:SetPoint("TOPLEFT", zoneX, -26)
 
-    headerTexts.killer:SetShown(DeathFeedDB.showKiller)
-    headerTexts.zone:SetShown(DeathFeedDB.showZone)
+    headerTexts.time:SetShown(DeathFeedDB.showHeaders)
+    headerTexts.level:SetShown(DeathFeedDB.showHeaders)
+    headerTexts.name:SetShown(DeathFeedDB.showHeaders)
+    headerTexts.killer:SetShown(DeathFeedDB.showHeaders and DeathFeedDB.showKiller)
+    headerTexts.zone:SetShown(DeathFeedDB.showHeaders and DeathFeedDB.showZone)
 
     for i = 1, maxHistory do
         rowFrames[i]:SetSize(math.max(1, width - 14), rowHeight)
 
         rowTexts[i].time:ClearAllPoints()
-        rowTexts[i].time:SetPoint("TOPLEFT", timeX, -31 - (i * rowHeight))
+        rowTexts[i].time:SetPoint("TOPLEFT", timeX, -getHeaderOffset() - (i * rowHeight))
         rowTexts[i].time:SetWidth(35)
 
         rowTexts[i].level:ClearAllPoints()
-        rowTexts[i].level:SetPoint("TOPLEFT", levelX, -31 - (i * rowHeight))
+        rowTexts[i].level:SetPoint("TOPLEFT", levelX, -getHeaderOffset() - (i * rowHeight))
         rowTexts[i].level:SetWidth(22)
 
         rowTexts[i].name:ClearAllPoints()
-        rowTexts[i].name:SetPoint("TOPLEFT", nameX, -31 - (i * rowHeight))
+        rowTexts[i].name:SetPoint("TOPLEFT", nameX, -getHeaderOffset() - (i * rowHeight))
         rowTexts[i].name:SetWidth(math.max(40, nameWidth))
 
         rowTexts[i].killer:ClearAllPoints()
-        rowTexts[i].killer:SetPoint("TOPLEFT", killerX, -31 - (i * rowHeight))
+        rowTexts[i].killer:SetPoint("TOPLEFT", killerX, -getHeaderOffset() - (i * rowHeight))
         rowTexts[i].killer:SetWidth(killerWidth)
 
         rowTexts[i].zone:ClearAllPoints()
-        rowTexts[i].zone:SetPoint("TOPLEFT", zoneX, -31 - (i * rowHeight))
+        rowTexts[i].zone:SetPoint("TOPLEFT", zoneX, -getHeaderOffset() - (i * rowHeight))
         rowTexts[i].zone:SetWidth(zoneWidth)
 
         rowTexts[i].killer:SetShown(DeathFeedDB.showKiller)
