@@ -30,6 +30,26 @@ local cases = {
         }
     },
     {
+        name = "English creature kill with player link",
+        message = "|Hplayer:Tibbo-LivingFlame|h[Tibbo]|h has been slain by a Defias Pillager in Westfall! They were level 14",
+        expected = {
+            name = "Tibbo",
+            killer = "Defias Pillager",
+            zone = "Westfall",
+            level = "14"
+        }
+    },
+    {
+        name = "English creature kill with colored player link",
+        message = "|cffc79c6e|Hplayer:Tibbo-LivingFlame|h[Tibbo]|h|r has been slain by a Defias Pillager in Westfall! They were level 14",
+        expected = {
+            name = "Tibbo",
+            killer = "Defias Pillager",
+            zone = "Westfall",
+            level = "14"
+        }
+    },
+    {
         name = "English lava",
         message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 45",
         expected = {

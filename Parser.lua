@@ -44,6 +44,27 @@ local function makeDeath(name, killer, zone, level)
     }
 end
 
+local function extractPlayerName(message)
+    local _, displayName, afterName = string.match(
+        message,
+        "|Hplayer:([^|]+)|h%[([^%]]+)%]|h(.*)$"
+    )
+
+    if displayName and afterName then
+        afterName = string.gsub(afterName, "^|r", "")
+        return cleanPlayerName(displayName), afterName
+    end
+
+    local nameEnd = string.find(message, "]", 1, true)
+
+    if not nameEnd then
+        return nil, nil
+    end
+
+    local name = string.sub(message, 2, nameEnd - 1)
+    return cleanPlayerName(name), string.sub(message, nameEnd + 1)
+end
+
 function parseDeathMessage(message)
     message = normalizeMessageText(message)
 
@@ -51,15 +72,11 @@ function parseDeathMessage(message)
     -- Extract player name
     -------------------------------------------------------------------
 
-    local nameEnd = string.find(message, "]", 1, true)
+    local name, afterName = extractPlayerName(message)
 
-    if not nameEnd then
+    if not name then
         return nil
     end
-
-    local name = cleanPlayerName(string.sub(message, 2, nameEnd - 1))
-
-    local afterName = string.sub(message, nameEnd + 1)
 
     -------------------------------------------------------------------
     -- Normalize special spaces used by some localized clients
