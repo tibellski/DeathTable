@@ -1,6 +1,20 @@
 function setupMinimapIcon()
-    local LDB = LibStub("LibDataBroker-1.1")
-    ldbIcon = LibStub("LibDBIcon-1.0")
+    if not LibStub then
+        printMessage("Minimap icon unavailable: LibStub is missing.")
+        return
+    end
+
+    local LDB = LibStub("LibDataBroker-1.1", true)
+    if not LDB then
+        printMessage("Minimap icon unavailable: LibDataBroker-1.1 is missing.")
+        return
+    end
+
+    ldbIcon = LibStub("LibDBIcon-1.0", true)
+    if not ldbIcon then
+        printMessage("Minimap icon unavailable: LibDBIcon-1.0 is missing.")
+        return
+    end
 
     local broker = LDB:NewDataObject("DeathFeed", {
         type = "launcher",
