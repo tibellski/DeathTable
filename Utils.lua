@@ -21,6 +21,15 @@ function printMessage(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[DeathFeed]|r " .. message)
 end
 
+function isHardcoreDeathChannel(channelName)
+    return channelName
+        and (
+            string.find(channelName, "HardcoreDeaths")
+            or string.find(channelName, "Morts extrêmes")
+            or string.find(channelName, "HardcoreTode")
+        )
+end
+
 function runWho(name)
     if not name or name == "" then
         return

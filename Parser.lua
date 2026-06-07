@@ -73,7 +73,19 @@ function parseDeathMessage(message)
     -- French player kill (PvP)
     -------------------------------------------------------------------
 
-    -- MISSING
+    local frenchPlayerKiller, frenchPlayerZone, frenchPlayerLevel = string.match(
+        afterName,
+        "%s*a succombé en combattant (.-)%s*%((.-)%)%s*!%s*Ce personnage%-joueur était de niveau (%d+)"
+    )
+
+    if frenchPlayerKiller and frenchPlayerZone and frenchPlayerLevel then
+        return {
+            name = name,
+            killer = frenchPlayerKiller,
+            zone = frenchPlayerZone,
+            level = frenchPlayerLevel
+        }
+    end
 
     -------------------------------------------------------------------
     -- German creature kill

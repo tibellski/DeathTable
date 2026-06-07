@@ -25,15 +25,7 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
         return
     end
 
-    local isHardcoreDeathChannel =
-        channelName
-        and (
-            string.find(channelName, "HardcoreDeaths")
-            or string.find(channelName, "Morts extrêmes")
-            or string.find(channelName, "HardcoreTode")
-        )
-
-    if not isHardcoreDeathChannel then
+    if not isHardcoreDeathChannel(channelName) then
         return
     end
 
