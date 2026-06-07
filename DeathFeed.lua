@@ -381,8 +381,10 @@ window:SetScript("OnMouseWheel", function(_, delta)
 end)
 
 function printParseError(message)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffff4444[DeathFeed]|r Failed to parse death message:")
-    DEFAULT_CHAT_FRAME:AddMessage("|cffaaaaaa" .. tostring(message) .. "|r")
+    printMessage("Failed to parse death message:")
+    printMessage(message)
+    printMessage("Please report this parser issue and include the message above:")
+    printMessage("https://www.curseforge.com/wow/addons/deathfeed/comments")
 end
 
 function setWindowShown(shown)

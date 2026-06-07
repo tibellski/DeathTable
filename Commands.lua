@@ -38,13 +38,14 @@ end
 SLASH_DEATHFEEDTEST1 = "/dftest"
 
 SlashCmdList["DEATHFEEDTEST"] = function()
-    local message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 45"
+    -- local message = "[Rurahc] was burnt to a crisp by lava in Ironforge! They were level 45"
+    local message = "[Rurahc] was hejhejhej"
     local death = parseDeathMessage(message)
 
     if death then
         addDeathMessage(death)
         printMessage("Test death added.")
     else
-        printMessage("Test parse failed.")
+        printParseError(message)
     end
 end
