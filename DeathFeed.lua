@@ -261,26 +261,30 @@ function updateLayout()
     headerTexts.zone:SetShown(DeathFeedDB.showHeaders and DeathFeedDB.showZone)
 
     for i = 1, maxHistory do
+        local rowY = -getHeaderOffset() - (i * rowHeight)
+
+        rowFrames[i]:ClearAllPoints()
+        rowFrames[i]:SetPoint("TOPLEFT", 6, rowY + 2)
         rowFrames[i]:SetSize(math.max(1, width - 14), rowHeight)
 
         rowTexts[i].time:ClearAllPoints()
-        rowTexts[i].time:SetPoint("TOPLEFT", timeX, -getHeaderOffset() - (i * rowHeight))
+        rowTexts[i].time:SetPoint("TOPLEFT", timeX, rowY)
         rowTexts[i].time:SetWidth(35)
 
         rowTexts[i].level:ClearAllPoints()
-        rowTexts[i].level:SetPoint("TOPLEFT", levelX, -getHeaderOffset() - (i * rowHeight))
+        rowTexts[i].level:SetPoint("TOPLEFT", levelX, rowY)
         rowTexts[i].level:SetWidth(22)
 
         rowTexts[i].name:ClearAllPoints()
-        rowTexts[i].name:SetPoint("TOPLEFT", nameX, -getHeaderOffset() - (i * rowHeight))
+        rowTexts[i].name:SetPoint("TOPLEFT", nameX, rowY)
         rowTexts[i].name:SetWidth(math.max(40, nameWidth))
 
         rowTexts[i].killer:ClearAllPoints()
-        rowTexts[i].killer:SetPoint("TOPLEFT", killerX, -getHeaderOffset() - (i * rowHeight))
+        rowTexts[i].killer:SetPoint("TOPLEFT", killerX, rowY)
         rowTexts[i].killer:SetWidth(killerWidth)
 
         rowTexts[i].zone:ClearAllPoints()
-        rowTexts[i].zone:SetPoint("TOPLEFT", zoneX, -getHeaderOffset() - (i * rowHeight))
+        rowTexts[i].zone:SetPoint("TOPLEFT", zoneX, rowY)
         rowTexts[i].zone:SetWidth(zoneWidth)
 
         rowTexts[i].killer:SetShown(DeathFeedDB.showKiller)
