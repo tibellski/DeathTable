@@ -1,17 +1,17 @@
-optionsPanel = CreateFrame("Frame", "DeathFeedOptionsPanel")
-optionsPanel.name = "DeathFeed"
+DeathFeedOptionsPanel = CreateFrame("Frame", "DeathFeedOptionsPanel")
+DeathFeedOptionsPanel.name = "DeathFeed"
 
-local optionsTitle = optionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+local optionsTitle = DeathFeedOptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 optionsTitle:SetPoint("TOPLEFT", 16, -16)
 optionsTitle:SetText("DeathFeed")
 
-deathFeedCategory = nil
+DeathFeedOptionsCategory = nil
 
 if Settings and Settings.RegisterCanvasLayoutCategory then
-    deathFeedCategory = Settings.RegisterCanvasLayoutCategory(optionsPanel, "DeathFeed")
-    Settings.RegisterAddOnCategory(deathFeedCategory)
+    DeathFeedOptionsCategory = Settings.RegisterCanvasLayoutCategory(DeathFeedOptionsPanel, "DeathFeed")
+    Settings.RegisterAddOnCategory(DeathFeedOptionsCategory)
 elseif InterfaceOptions_AddCategory then
-    InterfaceOptions_AddCategory(optionsPanel)
+    InterfaceOptions_AddCategory(DeathFeedOptionsPanel)
 end
 
     -------------------------------------------------------------------
@@ -21,7 +21,7 @@ end
 local hideChatCheckbox = CreateFrame(
     "CheckButton",
     "DeathFeedHideChatCheckbox",
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
 
@@ -43,7 +43,7 @@ end)
 local showKillerCheckbox = CreateFrame(
     "CheckButton",
     nil,
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
 
@@ -69,7 +69,7 @@ end)
 local showZoneCheckbox = CreateFrame(
     "CheckButton",
     nil,
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
 
@@ -95,7 +95,7 @@ end)
 local showHeadersCheckbox = CreateFrame(
     "CheckButton",
     nil,
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
 
@@ -120,7 +120,7 @@ end)
 local playSoundCheckbox = CreateFrame(
     "CheckButton",
     nil,
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
 
@@ -139,7 +139,7 @@ end)
 -- Minimum level
 -------------------------------------------------------------------
 
-local minimumLevelLabel = optionsPanel:CreateFontString(
+local minimumLevelLabel = DeathFeedOptionsPanel:CreateFontString(
     nil,
     "ARTWORK",
     "GameFontNormal"
@@ -151,7 +151,7 @@ minimumLevelLabel:SetText("Minimum level to display")
 local minimumLevelDropdown = CreateFrame(
     "Frame",
     "DeathFeedMinimumLevelDropdown",
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "UIDropDownMenuTemplate"
 )
 
@@ -207,7 +207,7 @@ end)
 local hideMinimapCheckbox = CreateFrame(
     "CheckButton",
     nil,
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "InterfaceOptionsCheckButtonTemplate"
 )
 
@@ -237,7 +237,7 @@ end)
 local clearButton = CreateFrame(
     "Button",
     nil,
-    optionsPanel,
+    DeathFeedOptionsPanel,
     "UIPanelButtonTemplate"
 )
 

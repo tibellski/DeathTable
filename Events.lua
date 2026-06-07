@@ -1,4 +1,4 @@
-eventFrame = CreateFrame("Frame")
+local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("CHAT_MSG_CHANNEL")
 eventFrame:RegisterEvent("GUILD_ROSTER_UPDATE")
@@ -8,7 +8,7 @@ eventFrame:SetScript("OnEvent", function(_, event, message, sender, language, ch
         updateGuildMembers()
 
         if DeathFeedDB.hidden then
-            window:Hide()
+            setWindowShown(false)
         end
 
         updateResizeBounds()

@@ -9,14 +9,14 @@ function setupMinimapIcon()
 
         OnClick = function(_, button)
             if button == "RightButton" then
-                if Settings and Settings.OpenToCategory and deathFeedCategory then
-                    Settings.OpenToCategory(deathFeedCategory.ID)
+                if Settings and Settings.OpenToCategory and DeathFeedOptionsCategory then
+                    Settings.OpenToCategory(DeathFeedOptionsCategory.ID)
                 elseif InterfaceOptionsFrame_OpenToCategory then
-                    InterfaceOptionsFrame_OpenToCategory(optionsPanel)
-                    InterfaceOptionsFrame_OpenToCategory(optionsPanel)
+                    InterfaceOptionsFrame_OpenToCategory(DeathFeedOptionsPanel)
+                    InterfaceOptionsFrame_OpenToCategory(DeathFeedOptionsPanel)
                 end
             else
-                setWindowShown(not window:IsShown())
+                setWindowShown(not isWindowShown())
             end
         end,
 

@@ -22,10 +22,10 @@ local defaults = {
 
 copyDefaults(defaults, DeathFeedDB)
 
-window = CreateFrame("Frame", "DeathFeedFrame", UIParent, "BackdropTemplate")
-window:SetSize(DeathFeedDB.width, DeathFeedDB.height)
+DeathFeedWindow = CreateFrame("Frame", "DeathFeedFrame", UIParent, "BackdropTemplate")
+DeathFeedWindow:SetSize(DeathFeedDB.width, DeathFeedDB.height)
 
-window:SetPoint(
+DeathFeedWindow:SetPoint(
     DeathFeedDB.point,
     UIParent,
     DeathFeedDB.relativePoint,
@@ -33,11 +33,11 @@ window:SetPoint(
     DeathFeedDB.y
 )
 
-window:SetMovable(true)
-window:SetResizable(true)
-window:EnableMouse(true)
-window:RegisterForDrag("LeftButton")
-window:SetClampedToScreen(true)
+DeathFeedWindow:SetMovable(true)
+DeathFeedWindow:SetResizable(true)
+DeathFeedWindow:EnableMouse(true)
+DeathFeedWindow:RegisterForDrag("LeftButton")
+DeathFeedWindow:SetClampedToScreen(true)
 
 function updateResizeBounds()
     local minWidth = 180
@@ -50,21 +50,21 @@ function updateResizeBounds()
         minWidth = 320
     end
 
-    if window.SetResizeBounds then
-        window:SetResizeBounds(minWidth, 120, 650, 500)
+    if DeathFeedWindow.SetResizeBounds then
+        DeathFeedWindow:SetResizeBounds(minWidth, 120, 650, 500)
     end
 
-    if window:GetWidth() < minWidth then
-        window:SetWidth(minWidth)
+    if DeathFeedWindow:GetWidth() < minWidth then
+        DeathFeedWindow:SetWidth(minWidth)
         DeathFeedDB.width = minWidth
     end
 end
 
-window:SetScript("OnDragStart", function(self)
+DeathFeedWindow:SetScript("OnDragStart", function(self)
     self:StartMoving()
 end)
 
-window:SetScript("OnDragStop", function(self)
+DeathFeedWindow:SetScript("OnDragStop", function(self)
     self:StopMovingOrSizing()
 
     local point, _, relativePoint, x, y = self:GetPoint()
@@ -75,7 +75,7 @@ window:SetScript("OnDragStop", function(self)
     DeathFeedDB.y = y
 end)
 
-local resizeHandle = CreateFrame("Button", nil, window)
+local resizeHandle = CreateFrame("Button", nil, DeathFeedWindow)
 resizeHandle:SetSize(16, 16)
 resizeHandle:SetPoint("BOTTOMRIGHT", 0, 0)
 resizeHandle:SetHitRectInsets(-4, -4, -4, -4)
@@ -84,31 +84,31 @@ resizeHandle:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
 resizeHandle:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
 resizeHandle:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
 
-resizeHandle:SetFrameLevel(window:GetFrameLevel() + 50)
+resizeHandle:SetFrameLevel(DeathFeedWindow:GetFrameLevel() + 50)
 
 resizeHandle:SetScript("OnMouseDown", function()
-    window:StartSizing("BOTTOMRIGHT")
+    DeathFeedWindow:StartSizing("BOTTOMRIGHT")
 end)
 
 resizeHandle:SetScript("OnMouseUp", function()
-    window:StopMovingOrSizing()
+    DeathFeedWindow:StopMovingOrSizing()
 
-    DeathFeedDB.width = window:GetWidth()
-    DeathFeedDB.height = window:GetHeight()
-
-    updateLayout()
-    updateRows(false)
-end)
-
-window:SetScript("OnSizeChanged", function()
-    DeathFeedDB.width = window:GetWidth()
-    DeathFeedDB.height = window:GetHeight()
+    DeathFeedDB.width = DeathFeedWindow:GetWidth()
+    DeathFeedDB.height = DeathFeedWindow:GetHeight()
 
     updateLayout()
     updateRows(false)
 end)
 
-window:SetBackdrop({
+DeathFeedWindow:SetScript("OnSizeChanged", function()
+    DeathFeedDB.width = DeathFeedWindow:GetWidth()
+    DeathFeedDB.height = DeathFeedWindow:GetHeight()
+
+    updateLayout()
+    updateRows(false)
+end)
+
+DeathFeedWindow:SetBackdrop({
     bgFile = "Interface/Buttons/WHITE8x8",
     edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
     edgeSize = 10,
@@ -120,10 +120,10 @@ window:SetBackdrop({
     }
 })
 
-window:SetBackdropColor(0.05, 0.05, 0.05, 0.90)
-window:SetBackdropBorderColor(0.55, 0.55, 0.55, 1)
+DeathFeedWindow:SetBackdropColor(0.05, 0.05, 0.05, 0.90)
+DeathFeedWindow:SetBackdropBorderColor(0.55, 0.55, 0.55, 1)
 
-local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+local title = DeathFeedWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOPLEFT", 10, -8)
 title:SetText("|cffcc4444Death Feed|r")
 
@@ -144,7 +144,7 @@ function getFrameChromeHeight()
 end
 
 function getMaxRows()
-    local usableHeight = window:GetHeight() - getFrameChromeHeight()
+    local usableHeight = DeathFeedWindow:GetHeight() - getFrameChromeHeight()
     return math.max(1, math.min(maxHistory, math.floor(usableHeight / rowHeight)))
 end
 
@@ -161,7 +161,7 @@ end
 local headerTexts = {}
 
 local function makeHeader(text)
-    local header = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    local header = DeathFeedWindow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     header:SetText(text)
     return header
 end
@@ -178,10 +178,10 @@ local rowTexts = {}
 for i = 1, maxHistory do
     local y = -getHeaderOffset() - (i * rowHeight)
 
-    rowFrames[i] = CreateFrame("Button", nil, window)
+    rowFrames[i] = CreateFrame("Button", nil, DeathFeedWindow)
     rowFrames[i]:SetPoint("TOPLEFT", 6, y + 2)
     rowFrames[i]:SetSize(165, rowHeight)
-    rowFrames[i]:SetFrameLevel(window:GetFrameLevel() + 10)
+    rowFrames[i]:SetFrameLevel(DeathFeedWindow:GetFrameLevel() + 10)
     rowFrames[i]:EnableMouse(true)
     rowFrames[i]:RegisterForClicks("LeftButtonUp")
 
@@ -205,15 +205,15 @@ for i = 1, maxHistory do
     end)
 
     rowTexts[i] = {}
-    rowTexts[i].time = makeColumn(window, 8, y, 35)
-    rowTexts[i].level = makeColumn(window, 48, y, 22)
-    rowTexts[i].name = makeColumn(window, 78, y, 90)
-    rowTexts[i].killer = makeColumn(window, 180, y, 120)
-    rowTexts[i].zone = makeColumn(window, 315, y, 120)
+    rowTexts[i].time = makeColumn(DeathFeedWindow, 8, y, 35)
+    rowTexts[i].level = makeColumn(DeathFeedWindow, 48, y, 22)
+    rowTexts[i].name = makeColumn(DeathFeedWindow, 78, y, 90)
+    rowTexts[i].killer = makeColumn(DeathFeedWindow, 180, y, 120)
+    rowTexts[i].zone = makeColumn(DeathFeedWindow, 315, y, 120)
 end
 
 function updateLayout()
-    local width = window:GetWidth()
+    local width = DeathFeedWindow:GetWidth()
     local rightPadding = 12
 
     local timeX = 8
@@ -384,9 +384,9 @@ function updateRows(animated)
     end
 end
 
-window:EnableMouseWheel(true)
+DeathFeedWindow:EnableMouseWheel(true)
 
-window:SetScript("OnMouseWheel", function(_, delta)
+DeathFeedWindow:SetScript("OnMouseWheel", function(_, delta)
     local maxOffset = math.max(0, getVisibleRowCount() - getMaxRows())
 
     if delta < 0 then
@@ -409,8 +409,12 @@ function setWindowShown(shown)
     DeathFeedDB.hidden = not shown
 
     if shown then
-        window:Show()
+        DeathFeedWindow:Show()
     else
-        window:Hide()
+        DeathFeedWindow:Hide()
     end
+end
+
+function isWindowShown()
+    return DeathFeedWindow:IsShown()
 end

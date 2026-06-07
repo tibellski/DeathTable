@@ -31,7 +31,7 @@ SlashCmdList["DEATHFEED"] = function(input)
             end
         end
     else
-        setWindowShown(not window:IsShown())
+        setWindowShown(not isWindowShown())
     end
 end
 
