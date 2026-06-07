@@ -15,7 +15,37 @@
 --   Fatigue
 -----------------------------------------------------------------------
 
+local function trim(value)
+    if not value then
+        return value
+    end
+
+    return string.gsub(value, "^%s*(.-)%s*$", "%1")
+end
+
+local function normalizeMessageText(message)
+    message = string.gsub(message, "\194\160", " ")
+    return message
+end
+
+local function cleanPlayerName(name)
+    name = string.gsub(name, "^Hplayer:", "")
+    name = string.gsub(name, "|h.*$", "")
+    name = string.gsub(name, "%-.*$", "")
+    return trim(name)
+end
+
+local function makeDeath(name, killer, zone, level)
+    return {
+        name = cleanPlayerName(name),
+        killer = trim(killer),
+        zone = trim(zone),
+        level = trim(level)
+    }
+end
+
 function parseDeathMessage(message)
+    message = normalizeMessageText(message)
 
     -------------------------------------------------------------------
     -- Extract player name
@@ -27,11 +57,7 @@ function parseDeathMessage(message)
         return nil
     end
 
-    local name = string.sub(message, 2, nameEnd - 1)
-
-    name = string.gsub(name, "^Hplayer:", "")
-    name = string.gsub(name, "|h.*$", "")
-    name = string.gsub(name, "%-.*$", "")
+    local name = cleanPlayerName(string.sub(message, 2, nameEnd - 1))
 
     local afterName = string.sub(message, nameEnd + 1)
 
@@ -39,8 +65,7 @@ function parseDeathMessage(message)
     -- Normalize special spaces used by some localized clients
     -------------------------------------------------------------------
 
-    afterName = string.gsub(afterName, "\194\160", " ")
-    afterName = string.gsub(afterName, " ", " ")
+    afterName = normalizeMessageText(afterName)
 
     -------------------------------------------------------------------
     -- English creature kill
@@ -61,12 +86,7 @@ function parseDeathMessage(message)
     )
 
     if frenchKiller and frenchZone and frenchLevel then
-        return {
-            name = name,
-            killer = frenchKiller,
-            zone = frenchZone,
-            level = frenchLevel
-        }
+        return makeDeath(name, frenchKiller, frenchZone, frenchLevel)
     end
 
     -------------------------------------------------------------------
@@ -79,12 +99,7 @@ function parseDeathMessage(message)
     )
 
     if frenchPlayerKiller and frenchPlayerZone and frenchPlayerLevel then
-        return {
-            name = name,
-            killer = frenchPlayerKiller,
-            zone = frenchPlayerZone,
-            level = frenchPlayerLevel
-        }
+        return makeDeath(name, frenchPlayerKiller, frenchPlayerZone, frenchPlayerLevel)
     end
 
     -------------------------------------------------------------------
@@ -97,12 +112,7 @@ function parseDeathMessage(message)
     )
 
     if germanKiller and germanZone and germanLevel then
-        return {
-            name = name,
-            killer = germanKiller,
-            zone = germanZone,
-            level = germanLevel
-        }
+        return makeDeath(name, germanKiller, germanZone, germanLevel)
     end
 
     -------------------------------------------------------------------
@@ -115,12 +125,7 @@ function parseDeathMessage(message)
     )
 
     if germanPlayerKiller and germanPlayerZone and germanPlayerLevel then
-        return {
-            name = name,
-            killer = germanPlayerKiller,
-            zone = germanPlayerZone,
-            level = germanPlayerLevel
-        }
+        return makeDeath(name, germanPlayerKiller, germanPlayerZone, germanPlayerLevel)
     end
 
     -------------------------------------------------------------------
@@ -140,12 +145,7 @@ function parseDeathMessage(message)
         )
 
         if fallZone and fallLevel then
-            return {
-                name = name,
-                killer = "Fall damage",
-                zone = fallZone,
-                level = fallLevel
-            }
+            return makeDeath(name, "Fall damage", fallZone, fallLevel)
         end
 
         -- French
@@ -155,12 +155,7 @@ function parseDeathMessage(message)
         )
 
         if frenchFallZone and frenchFallLevel then
-            return {
-                name = name,
-                killer = "Fall damage",
-                zone = frenchFallZone,
-                level = frenchFallLevel
-            }
+            return makeDeath(name, "Fall damage", frenchFallZone, frenchFallLevel)
         end
 
         -- German
@@ -170,12 +165,7 @@ function parseDeathMessage(message)
         )
 
         if germanFallZone and germanFallLevel then
-            return {
-                name = name,
-                killer = "Fall damage",
-                zone = germanFallZone,
-                level = germanFallLevel
-            }
+            return makeDeath(name, "Fall damage", germanFallZone, germanFallLevel)
         end
 
         ----------------------------------------------------------------
@@ -189,12 +179,7 @@ function parseDeathMessage(message)
         )
 
         if drownZone and drownLevel then
-            return {
-                name = name,
-                killer = "Drowning",
-                zone = drownZone,
-                level = drownLevel
-            }
+            return makeDeath(name, "Drowning", drownZone, drownLevel)
         end
 
         -- French
@@ -204,12 +189,7 @@ function parseDeathMessage(message)
         )
 
         if frenchDrownZone and frenchDrownLevel then
-            return {
-                name = name,
-                killer = "Drowning",
-                zone = frenchDrownZone,
-                level = frenchDrownLevel
-            }
+            return makeDeath(name, "Drowning", frenchDrownZone, frenchDrownLevel)
         end
 
         -- German
@@ -219,12 +199,7 @@ function parseDeathMessage(message)
         )
 
         if germanDrownZone and germanDrownLevel then
-            return {
-                name = name,
-                killer = "Drowning",
-                zone = germanDrownZone,
-                level = germanDrownLevel
-            }
+            return makeDeath(name, "Drowning", germanDrownZone, germanDrownLevel)
         end
 
         ----------------------------------------------------------------
@@ -238,12 +213,7 @@ function parseDeathMessage(message)
         )
 
         if lavaZone and lavaLevel then
-            return {
-                name = name,
-                killer = "Lava",
-                zone = lavaZone,
-                level = lavaLevel
-            }
+            return makeDeath(name, "Lava", lavaZone, lavaLevel)
         end
 
         -- French
@@ -253,12 +223,7 @@ function parseDeathMessage(message)
         )
 
         if frenchLavaZone and frenchLavaLevel then
-            return {
-                name = name,
-                killer = "Lava",
-                zone = frenchLavaZone,
-                level = frenchLavaLevel
-            }
+            return makeDeath(name, "Lava", frenchLavaZone, frenchLavaLevel)
         end
 
         -- German
@@ -268,12 +233,7 @@ function parseDeathMessage(message)
         )
 
         if germanLavaZone and germanLavaLevel then
-            return {
-                name = name,
-                killer = "Lava",
-                zone = germanLavaZone,
-                level = germanLavaLevel
-            }
+            return makeDeath(name, "Lava", germanLavaZone, germanLavaLevel)
         end
 
         ----------------------------------------------------------------
@@ -287,12 +247,7 @@ function parseDeathMessage(message)
         )
 
         if fatigueZone and fatigueLevel then
-            return {
-                name = name,
-                killer = "Fatigue",
-                zone = fatigueZone,
-                level = fatigueLevel
-            }
+            return makeDeath(name, "Fatigue", fatigueZone, fatigueLevel)
         end
 
         -- French
@@ -302,12 +257,7 @@ function parseDeathMessage(message)
         )
 
         if frenchFatigueZone and frenchFatigueLevel then
-            return {
-                name = name,
-                killer = "Fatigue",
-                zone = frenchFatigueZone,
-                level = frenchFatigueLevel
-            }
+            return makeDeath(name, "Fatigue", frenchFatigueZone, frenchFatigueLevel)
         end
 
         -- German
@@ -317,12 +267,7 @@ function parseDeathMessage(message)
         )
 
         if germanFatigueZone and germanFatigueLevel then
-            return {
-                name = name,
-                killer = "Fatigue",
-                zone = germanFatigueZone,
-                level = germanFatigueLevel
-            }
+            return makeDeath(name, "Fatigue", germanFatigueZone, germanFatigueLevel)
         end
 
         return nil
@@ -341,10 +286,5 @@ function parseDeathMessage(message)
     killer = string.gsub(killer, "^a ", "")
     killer = string.gsub(killer, "^an ", "")
 
-    return {
-        name = name,
-        killer = killer,
-        zone = zone,
-        level = level
-    }
+    return makeDeath(name, killer, zone, level)
 end
