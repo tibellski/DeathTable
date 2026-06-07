@@ -183,7 +183,9 @@ UIDropDownMenu_Initialize(minimumLevelDropdown, function()
 
         info.func = function()
             DeathFeedDB.minimumLevel = value
+            historyOffset = 0
             updateMinimumLevelDropdownText()
+            updateRows(false)
             CloseDropDownMenus()
         end
 

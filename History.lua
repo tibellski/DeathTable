@@ -1,21 +1,38 @@
 function getVisibleRows()
     local visibleRows = {}
     local maxRows = getMaxRows()
+    local visibleIndex = 1
 
-    for i = 1, maxRows do
-        visibleRows[i] = DeathFeedDB.history[i + historyOffset]
+    for _, row in ipairs(DeathFeedDB.history) do
+        local level = tonumber(row.level) or 0
+
+        if level >= DeathFeedDB.minimumLevel then
+            if visibleIndex > historyOffset and #visibleRows < maxRows then
+                table.insert(visibleRows, row)
+            end
+
+            visibleIndex = visibleIndex + 1
+        end
     end
 
     return visibleRows
 end
 
-function addDeathMessage(death)
-    local level = tonumber(death.level) or 0
+function getVisibleRowCount()
+    local count = 0
 
-    if level < DeathFeedDB.minimumLevel then
-        return
+    for _, row in ipairs(DeathFeedDB.history) do
+        local level = tonumber(row.level) or 0
+
+        if level >= DeathFeedDB.minimumLevel then
+            count = count + 1
+        end
     end
 
+    return count
+end
+
+function addDeathMessage(death)
     table.insert(DeathFeedDB.history, 1, {
         time = date("%H:%M"),
         name = death.name,

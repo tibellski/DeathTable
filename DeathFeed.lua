@@ -387,7 +387,7 @@ end
 window:EnableMouseWheel(true)
 
 window:SetScript("OnMouseWheel", function(_, delta)
-    local maxOffset = math.max(0, #DeathFeedDB.history - getMaxRows())
+    local maxOffset = math.max(0, getVisibleRowCount() - getMaxRows())
 
     if delta < 0 then
         historyOffset = math.min(historyOffset + 1, maxOffset)
