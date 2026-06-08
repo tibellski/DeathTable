@@ -35,8 +35,7 @@ DeathFeedWindow:SetPoint(
 
 DeathFeedWindow:SetMovable(true)
 DeathFeedWindow:SetResizable(true)
-DeathFeedWindow:EnableMouse(true)
-DeathFeedWindow:RegisterForDrag("LeftButton")
+DeathFeedWindow:EnableMouse(false)
 DeathFeedWindow:SetClampedToScreen(true)
 
 function updateResizeBounds()
@@ -60,19 +59,41 @@ function updateResizeBounds()
     end
 end
 
-DeathFeedWindow:SetScript("OnDragStart", function(self)
-    self:StartMoving()
-end)
-
-DeathFeedWindow:SetScript("OnDragStop", function(self)
-    self:StopMovingOrSizing()
-
-    local point, _, relativePoint, x, y = self:GetPoint()
+local function saveWindowPosition()
+    local point, _, relativePoint, x, y = DeathFeedWindow:GetPoint()
 
     DeathFeedDB.point = point
     DeathFeedDB.relativePoint = relativePoint
     DeathFeedDB.x = x
     DeathFeedDB.y = y
+end
+
+local function scrollHistory(delta)
+    local maxOffset = math.max(0, getVisibleRowCount() - getMaxRows())
+
+    if delta < 0 then
+        historyOffset = math.min(historyOffset + 1, maxOffset)
+    else
+        historyOffset = math.max(historyOffset - 1, 0)
+    end
+
+    updateRows(false)
+end
+
+local titleDragHandle = CreateFrame("Button", nil, DeathFeedWindow)
+titleDragHandle:SetPoint("TOPLEFT", 4, -4)
+titleDragHandle:SetPoint("TOPRIGHT", -4, -4)
+titleDragHandle:SetHeight(22)
+titleDragHandle:RegisterForDrag("LeftButton")
+titleDragHandle:EnableMouse(true)
+
+titleDragHandle:SetScript("OnDragStart", function()
+    DeathFeedWindow:StartMoving()
+end)
+
+titleDragHandle:SetScript("OnDragStop", function()
+    DeathFeedWindow:StopMovingOrSizing()
+    saveWindowPosition()
 end)
 
 local resizeHandle = CreateFrame("Button", nil, DeathFeedWindow)
@@ -124,7 +145,7 @@ DeathFeedWindow:SetBackdropColor(0.05, 0.05, 0.05, 0.90)
 DeathFeedWindow:SetBackdropBorderColor(0.55, 0.55, 0.55, 1)
 
 local title = DeathFeedWindow:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-title:SetPoint("TOPLEFT", 10, -8)
+title:SetPoint("TOPLEFT", 8, -8)
 title:SetText("|cffcc4444Death Feed|r")
 
 function getHeaderOffset()
@@ -182,11 +203,17 @@ for i = 1, maxHistory do
     rowFrames[i]:SetPoint("TOPLEFT", 6, y + 2)
     rowFrames[i]:SetSize(165, rowHeight)
     rowFrames[i]:SetFrameLevel(DeathFeedWindow:GetFrameLevel() + 10)
-    rowFrames[i]:EnableMouse(true)
+    rowFrames[i]:EnableMouse(false)
+    rowFrames[i]:EnableMouseWheel(true)
     rowFrames[i]:RegisterForClicks("LeftButtonUp")
+    rowFrames[i]:Hide()
 
     rowFrames[i]:SetScript("OnClick", function(self)
         runWho(self.deathName)
+    end)
+
+    rowFrames[i]:SetScript("OnMouseWheel", function(_, delta)
+        scrollHistory(delta)
     end)
 
     rowFrames[i]:SetScript("OnEnter", function(self)
@@ -387,20 +414,6 @@ function updateRows(animated)
         end
     end
 end
-
-DeathFeedWindow:EnableMouseWheel(true)
-
-DeathFeedWindow:SetScript("OnMouseWheel", function(_, delta)
-    local maxOffset = math.max(0, getVisibleRowCount() - getMaxRows())
-
-    if delta < 0 then
-        historyOffset = math.min(historyOffset + 1, maxOffset)
-    else
-        historyOffset = math.max(historyOffset - 1, 0)
-    end
-
-    updateRows(false)
-end)
 
 function printParseError(message)
     printMessage("Failed to parse death message:")
