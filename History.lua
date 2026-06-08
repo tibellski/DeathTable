@@ -1,12 +1,17 @@
+local function getMinimumLevel()
+    return tonumber(DeathFeedDB.minimumLevel) or 10
+end
+
 function getVisibleRows()
     local visibleRows = {}
     local maxRows = getMaxRows()
     local visibleIndex = 1
+    local minimumLevel = getMinimumLevel()
 
     for _, row in ipairs(DeathFeedDB.history) do
         local level = tonumber(row.level) or 0
 
-        if level >= DeathFeedDB.minimumLevel then
+        if level >= minimumLevel then
             if visibleIndex > historyOffset and #visibleRows < maxRows then
                 table.insert(visibleRows, row)
             end
@@ -20,11 +25,12 @@ end
 
 function getVisibleRowCount()
     local count = 0
+    local minimumLevel = getMinimumLevel()
 
     for _, row in ipairs(DeathFeedDB.history) do
         local level = tonumber(row.level) or 0
 
-        if level >= DeathFeedDB.minimumLevel then
+        if level >= minimumLevel then
             count = count + 1
         end
     end
