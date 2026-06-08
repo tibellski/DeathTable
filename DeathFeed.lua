@@ -218,11 +218,16 @@ for i = 1, maxHistory do
 
     rowFrames[i]:SetScript("OnEnter", function(self)
         if self.row then
+            local rowName = tostring(self.row.name or "Unknown")
+            local rowLevel = tostring(self.row.level or "")
+            local rowKiller = tostring(self.row.killer or "Unknown")
+            local rowZone = tostring(self.row.zone or "Unknown")
+
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-            GameTooltip:AddLine(self.row.name)
-            GameTooltip:AddLine("Level: " .. self.row.level, 1, 1, 1)
-            GameTooltip:AddLine("Killed by: " .. self.row.killer, 1, 0.45, 0.45)
-            GameTooltip:AddLine("Zone: " .. self.row.zone, 0.8, 0.8, 0.8)
+            GameTooltip:AddLine(rowName)
+            GameTooltip:AddLine("Level: " .. rowLevel, 1, 1, 1)
+            GameTooltip:AddLine("Killed by: " .. rowKiller, 1, 0.45, 0.45)
+            GameTooltip:AddLine("Zone: " .. rowZone, 0.8, 0.8, 0.8)
             GameTooltip:Show()
         end
     end)
@@ -329,34 +334,40 @@ function updateRows(animated)
         local row = visibleRows[i]
 
         if i <= maxRows and row then
+            local rowTime = tostring(row.time or "")
+            local rowLevel = tostring(row.level or "")
+            local rowName = tostring(row.name or "Unknown")
+            local rowKiller = tostring(row.killer or "Unknown")
+            local rowZone = tostring(row.zone or "Unknown")
+
             rowFrames[i].row = row
-            rowFrames[i].deathName = row.name
+            rowFrames[i].deathName = rowName
             rowFrames[i]:EnableMouse(true)
             rowFrames[i]:Show()
 
-            rowTexts[i].time:SetText("|cff888888" .. row.time .. "|r")
+            rowTexts[i].time:SetText("|cff888888" .. rowTime .. "|r")
 
-            rowTexts[i].level:SetText(colorLevel(row.level))
+            rowTexts[i].level:SetText(colorLevel(rowLevel))
 
-            if isGuildMember(row.name) then
-                rowTexts[i].name:SetText("|cff55ff55" .. row.name .. "|r")
+            if isGuildMember(rowName) then
+                rowTexts[i].name:SetText("|cff55ff55" .. rowName .. "|r")
             else
-                rowTexts[i].name:SetText("|cffdddddd" .. row.name .. "|r")
+                rowTexts[i].name:SetText("|cffdddddd" .. rowName .. "|r")
             end
             
-            if row.killer == "Fall damage" then
-                rowTexts[i].killer:SetText("|cff996633" .. row.killer .. "|r")
-            elseif row.killer == "Drowning" then
-                rowTexts[i].killer:SetText("|cff3399ff" .. row.killer .. "|r")
-            elseif row.killer == "Lava" then
-                rowTexts[i].killer:SetText("|cffffaa00" .. row.killer .. "|r")
-            elseif row.killer == "Fatigue" then
-                rowTexts[i].killer:SetText("|cff66ccff" .. row.killer .. "|r")
+            if rowKiller == "Fall damage" then
+                rowTexts[i].killer:SetText("|cff996633" .. rowKiller .. "|r")
+            elseif rowKiller == "Drowning" then
+                rowTexts[i].killer:SetText("|cff3399ff" .. rowKiller .. "|r")
+            elseif rowKiller == "Lava" then
+                rowTexts[i].killer:SetText("|cffffaa00" .. rowKiller .. "|r")
+            elseif rowKiller == "Fatigue" then
+                rowTexts[i].killer:SetText("|cff66ccff" .. rowKiller .. "|r")
             else
-                rowTexts[i].killer:SetText("|cffff7777" .. row.killer .. "|r")
+                rowTexts[i].killer:SetText("|cffff7777" .. rowKiller .. "|r")
             end
 
-            rowTexts[i].zone:SetText("|cffcccccc" .. row.zone .. "|r")
+            rowTexts[i].zone:SetText("|cffcccccc" .. rowZone .. "|r")
 
             rowTexts[i].time:Show()
             rowTexts[i].level:Show()

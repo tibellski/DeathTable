@@ -3,7 +3,10 @@ local guildMembers = {}
 function copyDefaults(source, target)
     for key, value in pairs(source) do
         if type(value) == "table" then
-            target[key] = target[key] or {}
+            if type(target[key]) ~= "table" then
+                target[key] = {}
+            end
+
             copyDefaults(value, target[key])
         elseif target[key] == nil then
             target[key] = value
